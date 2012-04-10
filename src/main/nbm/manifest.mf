@@ -1,3 +1,0 @@
-Manifest-Version: 1.0
-OpenIDE-Module-Install: de/markiewb/netbeans/plugin/showpath/Installer.class
-OpenIDE-Module-Localizing-Bundle: de/markiewb/netbeans/plugin/showpathintitle/Bundle.properties
