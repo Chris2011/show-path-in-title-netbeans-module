@@ -3,8 +3,7 @@ package de.markiewb.netbeans.plugin.showpathintitle;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 import org.netbeans.api.project.FileOwnerQuery;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectUtils;
@@ -19,7 +18,8 @@ import org.openide.windows.WindowManager;
 
 /**
  * Shows the path of the current {@link DataObject} in the title of the main
- * window.
+ * window. Additionally it shows <ul> <li>the project name </li> <li>the
+ * NetBeans version (only supported for NB &gt;=7.1)</li> </ul>
  *
  * @author markiewb
  */
@@ -30,6 +30,7 @@ public class Installer extends ModuleInstall {
 
     public Installer() {
         propertyChangeListener = new PropertyChangeListener() {
+
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
                 TopComponent activeTC = TopComponent.getRegistry().getActivated();
@@ -44,7 +45,7 @@ public class Installer extends ModuleInstall {
                 String projectName = null;
                 String fileName = null;
                 if (null != dataObject) {
-                    final FileObject primaryFile = getFileObjectAndSupportShadows(dataObject);
+                    final FileObject primaryFile = getFileObjectWithShadowSupport(dataObject);
 
                     projectName = getProjectName(primaryFile);
                     final File toFile = FileUtil.toFile(primaryFile);
@@ -64,18 +65,38 @@ public class Installer extends ModuleInstall {
                         fileName = node.getDisplayName();
                     }
                 }
+
+                //version only available for netbeans >=7.1
                 final String version = System.getProperty("netbeans.productversion");
                 final String projectNameFromProject = getProjectName(project);
                 if (null != projectNameFromProject) {
                     projectName = projectNameFromProject;
                 }
                 Set<String> list = new LinkedHashSet<String>();
-                list.add(projectName);
-                list.add(fileName);
-                list.add(version);
+                Options options = loadOptions();
+                if (options.showProjectName) {
+                    list.add(projectName);
+                }
+                if (options.showFileName) {
+                    list.add(fileName);
+                }
+                if (options.showIDEVersion) {
+                    list.add(version);
+                }
 
                 WindowManager.getDefault().getMainWindow().setTitle(StringUtils_join_nullignore(list, " - "));
 
+            }
+
+            private Options loadOptions() {
+                return new Options();
+            }
+
+            private void showSystemProperties() {
+                Iterable<String> keys = new TreeSet<String>(System.getProperties().stringPropertyNames());
+                for (String key : keys) {
+                    System.out.println(key + "=" + System.getProperty(key));
+                }
             }
 
             private String getProjectName(final Project project) {
@@ -113,7 +134,7 @@ public class Installer extends ModuleInstall {
                 return a;
             }
 
-            private FileObject getFileObjectAndSupportShadows(DataObject dataObject) {
+            private FileObject getFileObjectWithShadowSupport(DataObject dataObject) {
                 if (dataObject instanceof DataShadow) {
                     DataShadow dataShadow = (DataShadow) dataObject;
                     return dataShadow.getOriginal().getPrimaryFile();
