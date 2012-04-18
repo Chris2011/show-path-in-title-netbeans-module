@@ -73,7 +73,7 @@ public class Installer extends ModuleInstall {
                     projectName = projectNameFromProject;
                 }
                 Set<String> list = new LinkedHashSet<String>();
-                Options options = loadOptions();
+                ShowPathInTitleOptions options = ShowPathInTitleOptions.load();
                 if (options.showProjectName) {
                     list.add(projectName);
                 }
@@ -86,10 +86,6 @@ public class Installer extends ModuleInstall {
 
                 WindowManager.getDefault().getMainWindow().setTitle(StringUtils_join_nullignore(list, " - "));
 
-            }
-
-            private Options loadOptions() {
-                return new Options();
             }
 
             private void showSystemProperties() {
