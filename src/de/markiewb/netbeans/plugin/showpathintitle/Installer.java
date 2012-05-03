@@ -66,22 +66,27 @@ public class Installer extends ModuleInstall {
                     projectName = getProjectName(primaryFile);
 
                     final File toFile = FileUtil.toFile(primaryFile);
-                    fileName = toFile.getAbsolutePath();
-                } else {
-                    //else get the name
-                    String result = activeTC.getDisplayName();
-                    final String displayName = activeTC.getDisplayName();
-                    if (result != null) {
-                        fileName = result;
-                    }
-                    if (displayName != null) {
-                        fileName = displayName;
-                    }
-                    if (null != node) {
-                        fileName = node.getDisplayName();
+
+                    if (null != toFile) {
+                        fileName = toFile.getAbsolutePath();
                     }
                 }
 
+                //use other filename resolution strategies, if required
+                if (null == fileName) {
+                    if (fileName == null && activeTC.getDisplayName() != null) {
+                        fileName = activeTC.getDisplayName();
+                    }
+                    if (fileName == null && activeTC.getName() != null) {
+                        fileName = activeTC.getName();
+                    }
+                    if (fileName == null && node.getDisplayName() != null) {
+                        fileName = node.getDisplayName();
+                    }
+                    if (fileName == null && node.getName() != null) {
+                        fileName = node.getName();
+                    }
+                }
                 //version only available for netbeans >=7.1
                 final String version = System.getProperty("netbeans.productversion");
                 final String projectNameFromProject = getProjectName(project);
