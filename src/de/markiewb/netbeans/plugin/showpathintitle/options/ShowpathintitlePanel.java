@@ -40,6 +40,7 @@ final class ShowpathintitlePanel extends javax.swing.JPanel {
         cbPath = new javax.swing.JCheckBox();
         cbVersion = new javax.swing.JCheckBox();
         jButton1 = new javax.swing.JButton();
+        cbRelativePath = new javax.swing.JCheckBox();
 
         org.openide.awt.Mnemonics.setLocalizedText(txtIntroduction, org.openide.util.NbBundle.getMessage(ShowpathintitlePanel.class, "ShowpathintitlePanel.txtIntroduction.text")); // NOI18N
 
@@ -71,6 +72,13 @@ final class ShowpathintitlePanel extends javax.swing.JPanel {
             }
         });
 
+        org.openide.awt.Mnemonics.setLocalizedText(cbRelativePath, org.openide.util.NbBundle.getMessage(ShowpathintitlePanel.class, "ShowpathintitlePanel.cbRelativePath.text")); // NOI18N
+        cbRelativePath.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbRelativePathActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -78,14 +86,19 @@ final class ShowpathintitlePanel extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(cbVersion)
-                    .addComponent(cbPath)
-                    .addComponent(cbProjectName)
-                    .addComponent(txtIntroduction))
-                .addContainerGap(126, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(402, Short.MAX_VALUE)
-                .addComponent(jButton1)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jButton1))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(21, 21, 21)
+                                .addComponent(cbRelativePath))
+                            .addComponent(cbVersion)
+                            .addComponent(cbProjectName)
+                            .addComponent(txtIntroduction)
+                            .addComponent(cbPath))
+                        .addGap(0, 139, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -98,8 +111,10 @@ final class ShowpathintitlePanel extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(cbPath)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(cbRelativePath)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(cbVersion)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 146, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 123, Short.MAX_VALUE)
                 .addComponent(jButton1)
                 .addContainerGap())
         );
@@ -110,7 +125,7 @@ final class ShowpathintitlePanel extends javax.swing.JPanel {
     }//GEN-LAST:event_cbProjectNameActionPerformed
 
     private void cbPathActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbPathActionPerformed
-        // TODO add your handling code here:
+        cbRelativePath.setEnabled(cbPath.isEnabled());
     }//GEN-LAST:event_cbPathActionPerformed
 
     private void cbVersionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbVersionActionPerformed
@@ -125,11 +140,16 @@ final class ShowpathintitlePanel extends javax.swing.JPanel {
         load();
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    private void cbRelativePathActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbRelativePathActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cbRelativePathActionPerformed
+
     void load() {
         ShowPathInTitleOptions options = ShowPathInTitleOptions.load();
         cbVersion.setSelected(options.showIDEVersion);
         cbProjectName.setSelected(options.showProjectName);
         cbPath.setSelected(options.showFileName);
+        cbRelativePath.setSelected(options.showRelativeFilename);
     }
 
     void store() {
@@ -137,6 +157,7 @@ final class ShowpathintitlePanel extends javax.swing.JPanel {
         options.showProjectName = cbProjectName.isSelected();
         options.showFileName = cbPath.isSelected();
         options.showIDEVersion = cbVersion.isSelected();
+        options.showRelativeFilename = cbRelativePath.isSelected();
         options.save();
     }
 
@@ -147,6 +168,7 @@ final class ShowpathintitlePanel extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox cbPath;
     private javax.swing.JCheckBox cbProjectName;
+    private javax.swing.JCheckBox cbRelativePath;
     private javax.swing.JCheckBox cbVersion;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel txtIntroduction;

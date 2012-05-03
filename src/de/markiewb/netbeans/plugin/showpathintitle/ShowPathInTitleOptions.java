@@ -29,6 +29,7 @@ public class ShowPathInTitleOptions {
     public static final String SHOWFILENAME = "showFileName";
     public static final String SHOWIDEVERSION = "showIDEVersion";
     public static final String SHOWPROJECTNAME = "showProjectName";
+    public static final String SHOWRELATIVEFILENAME = "showRelativeFilename";
 
     private ShowPathInTitleOptions() {
         //NOP
@@ -36,6 +37,7 @@ public class ShowPathInTitleOptions {
     public boolean showProjectName;
     public boolean showFileName;
     public boolean showIDEVersion;
+    public boolean showRelativeFilename;
 
     public static ShowPathInTitleOptions load() {
         Preferences pref = NbPreferences.forModule(ShowPathInTitleOptions.class);
@@ -44,6 +46,7 @@ public class ShowPathInTitleOptions {
         options.showProjectName = pref.getBoolean(SHOWPROJECTNAME, true);
         options.showFileName = pref.getBoolean(SHOWFILENAME, true);
         options.showIDEVersion = pref.getBoolean(SHOWIDEVERSION, true);
+        options.showRelativeFilename = pref.getBoolean(SHOWRELATIVEFILENAME, true);
         return options;
     }
 
@@ -52,11 +55,13 @@ public class ShowPathInTitleOptions {
         pref.putBoolean(SHOWPROJECTNAME, showProjectName);
         pref.putBoolean(SHOWFILENAME, showFileName);
         pref.putBoolean(SHOWIDEVERSION, showIDEVersion);
+        pref.putBoolean(SHOWRELATIVEFILENAME, showRelativeFilename);
     }
 
     public void reset() {
         showProjectName = true;
         showFileName = true;
         showIDEVersion = true;
+        showRelativeFilename = true;
     }
 }

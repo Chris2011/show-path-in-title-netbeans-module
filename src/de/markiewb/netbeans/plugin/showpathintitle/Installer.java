@@ -58,13 +58,14 @@ public class Installer extends ModuleInstall {
                 Node node = activeTC.getLookup().lookup(Node.class);
 
                 String projectName = null;
+                String projectDir = null;
                 String fileName = null;
                 if (null != dataObject) {
                     final FileObject primaryFile = getFileObjectWithShadowSupport(dataObject);
-
+                    projectDir = getProjectDirectory(primaryFile);
                     projectName = getProjectName(primaryFile);
+
                     final File toFile = FileUtil.toFile(primaryFile);
-                    //TODO optional support for relative path within project
                     fileName = toFile.getAbsolutePath();
                 } else {
                     //else get the name
@@ -93,7 +94,14 @@ public class Installer extends ModuleInstall {
                     list.add(projectName);
                 }
                 if (options.showFileName) {
-                    list.add(fileName);
+                    if (options.showRelativeFilename) {
+                        if (null != fileName && null != projectDir && fileName.startsWith(projectDir)) {
+                            String reducedFileName = fileName.substring(projectDir.length());
+                            list.add(reducedFileName);
+                        }
+                    } else {
+                        list.add(fileName);
+                    }
                 }
                 if (options.showIDEVersion) {
                     list.add(version);
@@ -101,6 +109,16 @@ public class Installer extends ModuleInstall {
 
                 WindowManager.getDefault().getMainWindow().setTitle(StringUtils_join_nullignore(list, " - "));
 
+            }
+
+            private String getProjectDirectory(final FileObject primaryFile) {
+                try {
+                    FileObject projectDirectory = ProjectUtils.getInformation(FileOwnerQuery.getOwner(primaryFile)).getProject().getProjectDirectory();
+                    return FileUtil.toFile(projectDirectory).getAbsolutePath();
+                } catch (Exception e) {
+                    //ignore the exception
+                    return null;
+                }
             }
 
             private void showSystemProperties() {
@@ -112,6 +130,7 @@ public class Installer extends ModuleInstall {
 
             private String getProjectName(final Project project) {
                 try {
+
                     return ProjectUtils.getInformation(project).getDisplayName();
                 } catch (Exception e) {
                     //ignore the exception
