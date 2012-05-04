@@ -34,48 +34,32 @@ final class ShowpathintitlePanel extends javax.swing.JPanel {
      */
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        bindingGroup = new org.jdesktop.beansbinding.BindingGroup();
 
         txtIntroduction = new javax.swing.JLabel();
         cbProjectName = new javax.swing.JCheckBox();
         cbPath = new javax.swing.JCheckBox();
-        cbVersion = new javax.swing.JCheckBox();
-        jButton1 = new javax.swing.JButton();
         cbRelativePath = new javax.swing.JCheckBox();
+        cbVersion = new javax.swing.JCheckBox();
+        btnReset = new javax.swing.JButton();
 
         org.openide.awt.Mnemonics.setLocalizedText(txtIntroduction, org.openide.util.NbBundle.getMessage(ShowpathintitlePanel.class, "ShowpathintitlePanel.txtIntroduction.text")); // NOI18N
 
         org.openide.awt.Mnemonics.setLocalizedText(cbProjectName, org.openide.util.NbBundle.getMessage(ShowpathintitlePanel.class, "ShowpathintitlePanel.cbProjectName.text")); // NOI18N
-        cbProjectName.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cbProjectNameActionPerformed(evt);
-            }
-        });
 
         org.openide.awt.Mnemonics.setLocalizedText(cbPath, org.openide.util.NbBundle.getMessage(ShowpathintitlePanel.class, "ShowpathintitlePanel.cbPath.text")); // NOI18N
-        cbPath.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cbPathActionPerformed(evt);
-            }
-        });
 
-        org.openide.awt.Mnemonics.setLocalizedText(cbVersion, org.openide.util.NbBundle.getMessage(ShowpathintitlePanel.class, "ShowpathintitlePanel.cbVersion.text")); // NOI18N
-        cbVersion.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cbVersionActionPerformed(evt);
-            }
-        });
-
-        org.openide.awt.Mnemonics.setLocalizedText(jButton1, org.openide.util.NbBundle.getMessage(ShowpathintitlePanel.class, "ShowpathintitlePanel.jButton1.text")); // NOI18N
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
+        org.jdesktop.beansbinding.Binding binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, cbRelativePath, org.jdesktop.beansbinding.ELProperty.create("${enabled}"), cbPath, org.jdesktop.beansbinding.BeanProperty.create("selected"));
+        bindingGroup.addBinding(binding);
 
         org.openide.awt.Mnemonics.setLocalizedText(cbRelativePath, org.openide.util.NbBundle.getMessage(ShowpathintitlePanel.class, "ShowpathintitlePanel.cbRelativePath.text")); // NOI18N
-        cbRelativePath.addActionListener(new java.awt.event.ActionListener() {
+
+        org.openide.awt.Mnemonics.setLocalizedText(cbVersion, org.openide.util.NbBundle.getMessage(ShowpathintitlePanel.class, "ShowpathintitlePanel.cbVersion.text")); // NOI18N
+
+        org.openide.awt.Mnemonics.setLocalizedText(btnReset, org.openide.util.NbBundle.getMessage(ShowpathintitlePanel.class, "ShowpathintitlePanel.btnReset.text")); // NOI18N
+        btnReset.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cbRelativePathActionPerformed(evt);
+                btnResetActionPerformed(evt);
             }
         });
 
@@ -88,7 +72,7 @@ final class ShowpathintitlePanel extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jButton1))
+                        .addComponent(btnReset))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
@@ -115,34 +99,20 @@ final class ShowpathintitlePanel extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(cbVersion)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 123, Short.MAX_VALUE)
-                .addComponent(jButton1)
+                .addComponent(btnReset)
                 .addContainerGap())
         );
+
+        bindingGroup.bind();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void cbProjectNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbProjectNameActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_cbProjectNameActionPerformed
-
-    private void cbPathActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbPathActionPerformed
-        cbRelativePath.setEnabled(cbPath.isEnabled());
-    }//GEN-LAST:event_cbPathActionPerformed
-
-    private void cbVersionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbVersionActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_cbVersionActionPerformed
-
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void btnResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResetActionPerformed
         ShowPathInTitleOptions options = ShowPathInTitleOptions.load();
         options.reset();
         options.save();
 
         load();
-    }//GEN-LAST:event_jButton1ActionPerformed
-
-    private void cbRelativePathActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbRelativePathActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_cbRelativePathActionPerformed
+    }//GEN-LAST:event_btnResetActionPerformed
 
     void load() {
         ShowPathInTitleOptions options = ShowPathInTitleOptions.load();
@@ -166,11 +136,12 @@ final class ShowpathintitlePanel extends javax.swing.JPanel {
         return true;
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnReset;
     private javax.swing.JCheckBox cbPath;
     private javax.swing.JCheckBox cbProjectName;
     private javax.swing.JCheckBox cbRelativePath;
     private javax.swing.JCheckBox cbVersion;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel txtIntroduction;
+    private org.jdesktop.beansbinding.BindingGroup bindingGroup;
     // End of variables declaration//GEN-END:variables
 }
