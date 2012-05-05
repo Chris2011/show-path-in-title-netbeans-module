@@ -37,6 +37,8 @@ import org.openide.windows.WindowManager;
  * version (only supported for NB &gt;=7.1)</li></ul>. It can be configured
  * using {@link ShowPathInTitleOptions).
  *
+ * http://code.google.com/p/show-path-in-title-netbeans-module/
+ *
  * @author markiewb
  */
 public class Installer extends ModuleInstall {
