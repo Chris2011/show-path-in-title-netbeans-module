@@ -50,7 +50,7 @@ public class ShowPathInTitleOptions {
         options.showProjectName = pref.getBoolean(SHOWPROJECTNAME, true);
         options.showFileName = pref.getBoolean(SHOWFILENAME, true);
         options.showIDEVersion = pref.getBoolean(SHOWIDEVERSION, true);
-        options.showRelativeFilename = pref.getBoolean(SHOWRELATIVEFILENAME, false);
+        options.showRelativeFilename = pref.getBoolean(SHOWRELATIVEFILENAME, true);
         options.useNodeAsReference = pref.getBoolean(USENODEASREFERENCE, true);
         options.useEditorAsReference = pref.getBoolean(USEEDITORASREFERENCE, false);
         return options;
@@ -70,7 +70,7 @@ public class ShowPathInTitleOptions {
         showProjectName = true;
         showFileName = true;
         showIDEVersion = true;
-        showRelativeFilename = false;
+        showRelativeFilename = true;
         useNodeAsReference = true;
         useEditorAsReference = false;
     }
