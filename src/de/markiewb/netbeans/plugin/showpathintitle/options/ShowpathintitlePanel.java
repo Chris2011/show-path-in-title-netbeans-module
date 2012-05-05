@@ -34,25 +34,27 @@ final class ShowpathintitlePanel extends javax.swing.JPanel {
      */
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-        bindingGroup = new org.jdesktop.beansbinding.BindingGroup();
 
+        buttonGroup1 = new javax.swing.ButtonGroup();
         txtIntroduction = new javax.swing.JLabel();
         cbProjectName = new javax.swing.JCheckBox();
         cbPath = new javax.swing.JCheckBox();
-        cbRelativePath = new javax.swing.JCheckBox();
         cbVersion = new javax.swing.JCheckBox();
         btnReset = new javax.swing.JButton();
+        cbRelativePath = new javax.swing.JCheckBox();
+        rbUseEditorAsReference = new javax.swing.JRadioButton();
+        rbUseNodeAsReference = new javax.swing.JRadioButton();
 
         org.openide.awt.Mnemonics.setLocalizedText(txtIntroduction, org.openide.util.NbBundle.getMessage(ShowpathintitlePanel.class, "ShowpathintitlePanel.txtIntroduction.text")); // NOI18N
 
         org.openide.awt.Mnemonics.setLocalizedText(cbProjectName, org.openide.util.NbBundle.getMessage(ShowpathintitlePanel.class, "ShowpathintitlePanel.cbProjectName.text")); // NOI18N
 
         org.openide.awt.Mnemonics.setLocalizedText(cbPath, org.openide.util.NbBundle.getMessage(ShowpathintitlePanel.class, "ShowpathintitlePanel.cbPath.text")); // NOI18N
-
-        org.jdesktop.beansbinding.Binding binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, cbRelativePath, org.jdesktop.beansbinding.ELProperty.create("${enabled}"), cbPath, org.jdesktop.beansbinding.BeanProperty.create("selected"));
-        bindingGroup.addBinding(binding);
-
-        org.openide.awt.Mnemonics.setLocalizedText(cbRelativePath, org.openide.util.NbBundle.getMessage(ShowpathintitlePanel.class, "ShowpathintitlePanel.cbRelativePath.text")); // NOI18N
+        cbPath.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                cbPathStateChanged(evt);
+            }
+        });
 
         org.openide.awt.Mnemonics.setLocalizedText(cbVersion, org.openide.util.NbBundle.getMessage(ShowpathintitlePanel.class, "ShowpathintitlePanel.cbVersion.text")); // NOI18N
 
@@ -62,6 +64,16 @@ final class ShowpathintitlePanel extends javax.swing.JPanel {
                 btnResetActionPerformed(evt);
             }
         });
+
+        org.openide.awt.Mnemonics.setLocalizedText(cbRelativePath, org.openide.util.NbBundle.getMessage(ShowpathintitlePanel.class, "ShowpathintitlePanel.cbRelativePath.text")); // NOI18N
+
+        buttonGroup1.add(rbUseEditorAsReference);
+        org.openide.awt.Mnemonics.setLocalizedText(rbUseEditorAsReference, org.openide.util.NbBundle.getMessage(ShowpathintitlePanel.class, "ShowpathintitlePanel.rbUseEditorAsReference.text")); // NOI18N
+        rbUseEditorAsReference.setToolTipText(org.openide.util.NbBundle.getMessage(ShowpathintitlePanel.class, "ShowpathintitlePanel.rbUseEditorAsReference.toolTipText")); // NOI18N
+
+        buttonGroup1.add(rbUseNodeAsReference);
+        org.openide.awt.Mnemonics.setLocalizedText(rbUseNodeAsReference, org.openide.util.NbBundle.getMessage(ShowpathintitlePanel.class, "ShowpathintitlePanel.rbUseNodeAsReference.text")); // NOI18N
+        rbUseNodeAsReference.setToolTipText(org.openide.util.NbBundle.getMessage(ShowpathintitlePanel.class, "ShowpathintitlePanel.rbUseNodeAsReference.toolTipText")); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -75,35 +87,44 @@ final class ShowpathintitlePanel extends javax.swing.JPanel {
                         .addComponent(btnReset))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(21, 21, 21)
-                                .addComponent(cbRelativePath))
-                            .addComponent(cbVersion)
                             .addComponent(cbProjectName)
                             .addComponent(txtIntroduction)
-                            .addComponent(cbPath))
-                        .addGap(0, 139, Short.MAX_VALUE)))
+                            .addComponent(cbPath)
+                            .addComponent(cbVersion)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(21, 21, 21)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(rbUseNodeAsReference)
+                                    .addComponent(cbRelativePath)
+                                    .addComponent(rbUseEditorAsReference))))
+                        .addGap(0, 13, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(txtIntroduction)
-                .addGap(8, 8, 8)
-                .addComponent(cbProjectName)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(cbPath)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(cbRelativePath)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(cbVersion)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 123, Short.MAX_VALUE)
-                .addComponent(btnReset)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(txtIntroduction)
+                        .addGap(8, 8, 8)
+                        .addComponent(cbProjectName)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(cbPath)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(cbRelativePath)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(rbUseNodeAsReference)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(rbUseEditorAsReference)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(cbVersion)
+                        .addGap(0, 25, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(btnReset)))
                 .addContainerGap())
         );
-
-        bindingGroup.bind();
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResetActionPerformed
@@ -114,12 +135,23 @@ final class ShowpathintitlePanel extends javax.swing.JPanel {
         load();
     }//GEN-LAST:event_btnResetActionPerformed
 
+    private void cbPathStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_cbPathStateChanged
+        boolean selected = cbPath.isSelected();
+
+        //enable or disable dependend widgets
+        cbRelativePath.setEnabled(selected);
+        rbUseNodeAsReference.setEnabled(selected);
+        rbUseEditorAsReference.setEnabled(selected);
+    }//GEN-LAST:event_cbPathStateChanged
+
     void load() {
         ShowPathInTitleOptions options = ShowPathInTitleOptions.load();
         cbVersion.setSelected(options.showIDEVersion);
         cbProjectName.setSelected(options.showProjectName);
         cbPath.setSelected(options.showFileName);
         cbRelativePath.setSelected(options.showRelativeFilename);
+        rbUseNodeAsReference.setSelected(options.useNodeAsReference);
+        rbUseEditorAsReference.setSelected(options.useEditorAsReference);
     }
 
     void store() {
@@ -128,6 +160,8 @@ final class ShowpathintitlePanel extends javax.swing.JPanel {
         options.showFileName = cbPath.isSelected();
         options.showIDEVersion = cbVersion.isSelected();
         options.showRelativeFilename = cbRelativePath.isSelected();
+        options.useNodeAsReference = rbUseNodeAsReference.isSelected();
+        options.useEditorAsReference = rbUseEditorAsReference.isSelected();
         options.save();
     }
 
@@ -137,11 +171,13 @@ final class ShowpathintitlePanel extends javax.swing.JPanel {
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnReset;
+    private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JCheckBox cbPath;
     private javax.swing.JCheckBox cbProjectName;
     private javax.swing.JCheckBox cbRelativePath;
     private javax.swing.JCheckBox cbVersion;
+    private javax.swing.JRadioButton rbUseEditorAsReference;
+    private javax.swing.JRadioButton rbUseNodeAsReference;
     private javax.swing.JLabel txtIntroduction;
-    private org.jdesktop.beansbinding.BindingGroup bindingGroup;
     // End of variables declaration//GEN-END:variables
 }

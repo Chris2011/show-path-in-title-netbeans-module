@@ -28,13 +28,15 @@ import org.openide.loaders.DataObject;
 import org.openide.loaders.DataShadow;
 import org.openide.modules.ModuleInstall;
 import org.openide.nodes.Node;
+import org.openide.windows.Mode;
 import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
 
 /**
- * Shows the path of the current {@link DataObject} in the title of the main
- * window. Additionally it shows <ul> <li>the project name </li> <li>the
- * NetBeans version (only supported for NB &gt;=7.1)</li> </ul>
+ * Shows the path of the current editor or node in the title of the main window.
+ * Additionally it shows <ul> <li>the project name </li> <li>the NetBeans
+ * version (only supported for NB &gt;=7.1)</li></ul>. It can be configured
+ * using {@link ShowPathInTitleOptions).
  *
  * @author markiewb
  */
@@ -48,7 +50,16 @@ public class Installer extends ModuleInstall {
 
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
-                TopComponent activeTC = TopComponent.getRegistry().getActivated();
+                ShowPathInTitleOptions options = ShowPathInTitleOptions.load();
+
+                TopComponent activeTC = null;
+                if (options.useNodeAsReference) {
+                    activeTC = TopComponent.getRegistry().getActivated();
+                }
+                if (options.useEditorAsReference) {
+                    activeTC = getCurrentEditor();
+                }
+
                 if (null == activeTC) {
                     return;
                 }
@@ -94,7 +105,6 @@ public class Installer extends ModuleInstall {
                     projectName = projectNameFromProject;
                 }
                 Set<String> list = new LinkedHashSet<String>();
-                ShowPathInTitleOptions options = ShowPathInTitleOptions.load();
                 if (options.showProjectName) {
                     list.add(projectName);
                 }
@@ -175,6 +185,19 @@ public class Installer extends ModuleInstall {
                     return dataShadow.getOriginal().getPrimaryFile();
                 }
                 return dataObject.getPrimaryFile();
+            }
+
+            /**
+             * Gets the currently opened editor.
+             */
+            private TopComponent getCurrentEditor() {
+                Set<? extends Mode> modes = WindowManager.getDefault().getModes();
+                for (Mode mode : modes) {
+                    if ("editor".equals(mode.getName())) {
+                        return mode.getSelectedTopComponent();
+                    }
+                }
+                return null;
             }
         };
     }

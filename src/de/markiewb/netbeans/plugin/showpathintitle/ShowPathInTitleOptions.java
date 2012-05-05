@@ -30,6 +30,8 @@ public class ShowPathInTitleOptions {
     public static final String SHOWIDEVERSION = "showIDEVersion";
     public static final String SHOWPROJECTNAME = "showProjectName";
     public static final String SHOWRELATIVEFILENAME = "showRelativeFilename";
+    public static final String USENODEASREFERENCE = "useNodeAsReference";
+    public static final String USEEDITORASREFERENCE = "useEditorAsReference";
 
     private ShowPathInTitleOptions() {
         //NOP
@@ -38,6 +40,8 @@ public class ShowPathInTitleOptions {
     public boolean showFileName;
     public boolean showIDEVersion;
     public boolean showRelativeFilename;
+    public boolean useNodeAsReference;
+    public boolean useEditorAsReference;
 
     public static ShowPathInTitleOptions load() {
         Preferences pref = NbPreferences.forModule(ShowPathInTitleOptions.class);
@@ -47,6 +51,8 @@ public class ShowPathInTitleOptions {
         options.showFileName = pref.getBoolean(SHOWFILENAME, true);
         options.showIDEVersion = pref.getBoolean(SHOWIDEVERSION, true);
         options.showRelativeFilename = pref.getBoolean(SHOWRELATIVEFILENAME, false);
+        options.useNodeAsReference = pref.getBoolean(USENODEASREFERENCE, true);
+        options.useEditorAsReference = pref.getBoolean(USEEDITORASREFERENCE, false);
         return options;
     }
 
@@ -56,6 +62,8 @@ public class ShowPathInTitleOptions {
         pref.putBoolean(SHOWFILENAME, showFileName);
         pref.putBoolean(SHOWIDEVERSION, showIDEVersion);
         pref.putBoolean(SHOWRELATIVEFILENAME, showRelativeFilename);
+        pref.putBoolean(USENODEASREFERENCE, useNodeAsReference);
+        pref.putBoolean(USEEDITORASREFERENCE, useEditorAsReference);
     }
 
     public void reset() {
@@ -63,5 +71,7 @@ public class ShowPathInTitleOptions {
         showFileName = true;
         showIDEVersion = true;
         showRelativeFilename = false;
+        useNodeAsReference = true;
+        useEditorAsReference = false;
     }
 }
