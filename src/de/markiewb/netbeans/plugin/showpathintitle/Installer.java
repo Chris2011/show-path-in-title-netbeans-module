@@ -108,8 +108,20 @@ public class Installer extends ModuleInstall {
                 }
 
                 // set title
-                WindowManager.getDefault().getMainWindow().setTitle(StringUtils_join_nullignore(list, " - "));
+                String title = StringUtils_join_nullignore(list, " - ");
+                WindowManager.getDefault().getMainWindow().setTitle(defaultIfEmpty(title, "NetBeans"));
 
+            }
+
+            /**
+             * Returns the original string if not empty or not null. Else return
+             * the given default.
+             */
+            private String defaultIfEmpty(String string, String defaultStr) {
+                if (null == string || "".equals(string)) {
+                    return defaultStr;
+                }
+                return string;
             }
 
             private String getProjectDirectory(final FileObject primaryFile) {
