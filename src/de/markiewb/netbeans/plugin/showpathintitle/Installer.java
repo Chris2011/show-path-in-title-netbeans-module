@@ -27,7 +27,6 @@ import org.openide.filesystems.FileUtil;
 import org.openide.loaders.DataObject;
 import org.openide.loaders.DataShadow;
 import org.openide.modules.ModuleInstall;
-import org.openide.nodes.Node;
 import org.openide.windows.Mode;
 import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
@@ -66,7 +65,6 @@ public class Installer extends ModuleInstall {
 
                 DataObject dataObject = activeTC.getLookup().lookup(DataObject.class);
                 Project project = activeTC.getLookup().lookup(Project.class);
-                Node node = activeTC.getLookup().lookup(Node.class);
 
                 String projectName = null;
                 String projectDir = null;
@@ -82,20 +80,19 @@ public class Installer extends ModuleInstall {
                         fileName = toFile.getAbsolutePath();
                     }
                 }
-
-
-                //version only available for netbeans >=7.1
-                final String version = System.getProperty("netbeans.productversion");
-                final String projectNameFromProject = getProjectName(project);
-                if (null != projectNameFromProject) {
-                    projectName = projectNameFromProject;
+                if (projectName == null) {
+                    projectName = getProjectName(project);
                 }
+
+                // create title
                 Set<String> list = new LinkedHashSet<String>();
                 if (options.showProjectName) {
                     list.add(projectName);
                 }
+
                 if (options.showFileName) {
                     if (options.showRelativeFilename) {
+                        //create and use relative file name
                         if (null != fileName && null != projectDir && fileName.startsWith(projectDir)) {
                             String reducedFileName = fileName.substring(projectDir.length());
                             list.add(reducedFileName);
@@ -104,10 +101,13 @@ public class Installer extends ModuleInstall {
                         list.add(fileName);
                     }
                 }
+
                 if (options.showIDEVersion) {
-                    list.add(version);
+                    // version only available for netbeans >=7.1
+                    list.add(System.getProperty("netbeans.productversion"));
                 }
 
+                // set title
                 WindowManager.getDefault().getMainWindow().setTitle(StringUtils_join_nullignore(list, " - "));
 
             }
