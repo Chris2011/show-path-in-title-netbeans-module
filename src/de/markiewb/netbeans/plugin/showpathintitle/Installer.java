@@ -83,21 +83,7 @@ public class Installer extends ModuleInstall {
                     }
                 }
 
-                //use other filename resolution strategies, if required
-                if (null == fileName) {
-                    if (fileName == null && activeTC.getDisplayName() != null) {
-                        fileName = activeTC.getDisplayName();
-                    }
-                    if (fileName == null && activeTC.getName() != null) {
-                        fileName = activeTC.getName();
-                    }
-                    if (fileName == null && node.getDisplayName() != null) {
-                        fileName = node.getDisplayName();
-                    }
-                    if (fileName == null && node.getName() != null) {
-                        fileName = node.getName();
-                    }
-                }
+
                 //version only available for netbeans >=7.1
                 final String version = System.getProperty("netbeans.productversion");
                 final String projectNameFromProject = getProjectName(project);
