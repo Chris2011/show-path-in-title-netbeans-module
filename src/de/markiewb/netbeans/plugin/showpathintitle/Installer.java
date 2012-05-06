@@ -93,12 +93,13 @@ public class Installer extends ModuleInstall {
                 }
 
                 if (options.showFileName) {
-                    if (options.showRelativeFilename) {
+                    //show relative path, when project dir is in selected path
+                    //show no relative path, when project dir equals selected path
+                    boolean isRelativePath = null != fileName && null != projectDir && fileName.startsWith(projectDir) && !fileName.equals(projectDir);
+                    if (options.showRelativeFilename && isRelativePath) {
                         //create and use relative file name
-                        if (null != fileName && null != projectDir && fileName.startsWith(projectDir)) {
-                            String reducedFileName = fileName.substring(projectDir.length());
-                            list.add(reducedFileName);
-                        }
+                        String reducedFileName = fileName.substring(projectDir.length());
+                        list.add(reducedFileName);
                     } else {
                         list.add(fileName);
                     }
@@ -166,7 +167,7 @@ public class Installer extends ModuleInstall {
                 boolean first = true;
                 String a = "";
                 for (String string : list) {
-                    if (null == string) {
+                    if (null == string || "".equals(string)) {
                         continue;
                     }
                     if (!first) {
