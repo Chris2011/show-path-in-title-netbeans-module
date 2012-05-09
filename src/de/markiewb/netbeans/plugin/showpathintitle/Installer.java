@@ -82,8 +82,11 @@ public class Installer extends ModuleInstall {
                         fileName = toFile.getAbsolutePath();
                     }
                 }
-                if (projectName == null) {
+                if (null == projectName) {
                     projectName = getProjectName(project);
+                }
+                if (null == projectDir && null != project) {
+                    projectDir = getProjectDirectory(project);
                 }
 
                 // create title
@@ -99,10 +102,14 @@ public class Installer extends ModuleInstall {
                     if (options.showRelativeFilename && isRelativePath) {
                         //create and use relative file name
                         String reducedFileName = fileName.substring(projectDir.length());
-                        list.add(reducedFileName);
+                        fileName = reducedFileName;
                     } else {
-                        list.add(fileName);
+                        if (null == fileName && null != projectDir) {
+                            //show projectDir as fallback
+                            fileName = projectDir;
+                        }
                     }
+                    list.add(fileName);
                 }
 
                 if (options.showIDEVersion) {
@@ -129,7 +136,17 @@ public class Installer extends ModuleInstall {
 
             private String getProjectDirectory(final FileObject primaryFile) {
                 try {
-                    FileObject projectDirectory = ProjectUtils.getInformation(FileOwnerQuery.getOwner(primaryFile)).getProject().getProjectDirectory();
+                    Project project = ProjectUtils.getInformation(FileOwnerQuery.getOwner(primaryFile)).getProject();
+                    return getProjectDirectory(project);
+                } catch (Exception e) {
+                    //ignore the exception
+                    return null;
+                }
+            }
+
+            private String getProjectDirectory(final Project project) {
+                try {
+                    FileObject projectDirectory = project.getProjectDirectory();
                     return FileUtil.toFile(projectDirectory).getAbsolutePath();
                 } catch (Exception e) {
                     //ignore the exception
