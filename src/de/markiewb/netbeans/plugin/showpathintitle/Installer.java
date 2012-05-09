@@ -19,6 +19,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.*;
+import java.util.regex.Pattern;
 import org.netbeans.api.project.FileOwnerQuery;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectUtils;
@@ -109,6 +110,27 @@ public class Installer extends ModuleInstall {
                             fileName = projectDir;
                         }
                     }
+
+                    if (options.showReversedRelativeFilename) {
+//                        List<String> list1 = new ArrayList<String>(
+//                                Arrays.asList(fileName.split(
+//                                "\\")));
+
+                        String[] subDirs = fileName.split(Pattern.quote(File.separator));
+                        List<String> list2 = new ArrayList<String>(
+                                Arrays.asList(subDirs));
+
+
+                        Collections.reverse(list2);
+                        String reversedFilename = StringUtils_join_nullignore(list2, File.separator);
+                        if (!"".equals(reversedFilename)) {
+                            reversedFilename += File.separator;
+                        }
+                        fileName = reversedFilename;
+
+                    }
+
+
                     list.add(fileName);
                 }
 

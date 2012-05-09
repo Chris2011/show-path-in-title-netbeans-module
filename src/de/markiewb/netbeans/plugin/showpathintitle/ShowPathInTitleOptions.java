@@ -32,6 +32,7 @@ public class ShowPathInTitleOptions {
     public static final String SHOWRELATIVEFILENAME = "showRelativeFilename";
     public static final String USENODEASREFERENCE = "useNodeAsReference";
     public static final String USEEDITORASREFERENCE = "useEditorAsReference";
+    boolean showReversedRelativeFilename = true;
 
     private ShowPathInTitleOptions() {
         //NOP
