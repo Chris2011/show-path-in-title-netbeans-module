@@ -22,6 +22,7 @@ import java.util.*;
 import org.netbeans.api.project.FileOwnerQuery;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectUtils;
+import org.openide.awt.StatusDisplayer;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.loaders.DataObject;
@@ -48,7 +49,6 @@ public class Installer extends ModuleInstall {
 
     public Installer() {
         propertyChangeListener = new PropertyChangeListener() {
-
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
                 ShowPathInTitleOptions options = ShowPathInTitleOptions.load();
@@ -67,10 +67,17 @@ public class Installer extends ModuleInstall {
 
                 DataObject dataObject = activeTC.getLookup().lookup(DataObject.class);
                 Project project = activeTC.getLookup().lookup(Project.class);
+//                showInStatusBar(activeTC.getLookup().lookup(DataObject.class));
+//                showInStatusBar(activeTC.getLookup().lookup(Project.class));
 
                 String projectName = null;
                 String projectDir = null;
                 String fileName = null;
+                if (null != project) {
+                    projectName = getProjectName(project);
+                    projectDir = getProjectDirectory(project);
+                }
+
                 if (null != dataObject) {
                     final FileObject primaryFile = getFileObjectWithShadowSupport(dataObject);
                     projectDir = getProjectDirectory(primaryFile);
@@ -92,46 +99,39 @@ public class Installer extends ModuleInstall {
                             fileName = fullJARPath;
                         }
                     }
-                    if (null == projectName) {
-                        projectName = getProjectName(project);
-                    }
-                    if (null == projectDir && null != project) {
-                        projectDir = getProjectDirectory(project);
-                    }
-
-                    // create title
-                    Set<String> list = new LinkedHashSet<String>();
-                    if (options.showProjectName) {
-                        list.add(projectName);
-                    }
-
-                    if (options.showFileName) {
-                        //show relative path, when project dir is in selected path
-                        //show no relative path, when project dir equals selected path
-                        boolean isRelativePath = null != fileName && null != projectDir && fileName.startsWith(projectDir) && !fileName.equals(projectDir);
-                        if (options.showRelativeFilename && isRelativePath) {
-                            //create and use relative file name
-                            String reducedFileName = fileName.substring(projectDir.length());
-                            fileName = reducedFileName;
-                        } else {
-                            if (null == fileName && null != projectDir) {
-                                //show projectDir as fallback
-                                fileName = projectDir;
-                            }
-                        }
-                        list.add(fileName);
-                    }
-
-                    if (options.showIDEVersion) {
-                        // version only available for netbeans >=7.1
-                        list.add(System.getProperty("netbeans.productversion"));
-                    }
-
-                    // set title
-                    String title = StringUtils_join_nullignore(list, " - ");
-                    WindowManager.getDefault().getMainWindow().setTitle(defaultIfEmpty(title, "NetBeans"));
 
                 }
+                // create title
+                Set<String> list = new LinkedHashSet<String>();
+                if (options.showProjectName) {
+                    list.add(projectName);
+                }
+
+                if (options.showFileName) {
+                    //show relative path, when project dir is in selected path
+                    //show no relative path, when project dir equals selected path
+                    boolean isRelativePath = null != fileName && null != projectDir && fileName.startsWith(projectDir) && !fileName.equals(projectDir);
+                    if (options.showRelativeFilename && isRelativePath) {
+                        //create and use relative file name
+                        String reducedFileName = fileName.substring(projectDir.length());
+                        fileName = reducedFileName;
+                    } else {
+                        if (null == fileName && null != projectDir) {
+                            //show projectDir as fallback
+                            fileName = projectDir;
+                        }
+                    }
+                    list.add(fileName);
+                }
+
+                if (options.showIDEVersion) {
+                    // version only available for netbeans >=7.1
+                    list.add(System.getProperty("netbeans.productversion"));
+                }
+
+                // set title
+                String title = StringUtils_join_nullignore(list, " - ");
+                WindowManager.getDefault().getMainWindow().setTitle(defaultIfEmpty(title, "NetBeans"));
             }
 
             /**
@@ -227,6 +227,15 @@ public class Installer extends ModuleInstall {
                     }
                 }
                 return null;
+            }
+
+            private void showInStatusBar(Object data) {
+                if (null != data) {
+                    StatusDisplayer.getDefault().setStatusText(data.toString());
+                } else {
+                    StatusDisplayer.getDefault().setStatusText("");
+
+                }
             }
         };
     }
