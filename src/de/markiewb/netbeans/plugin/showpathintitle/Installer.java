@@ -76,51 +76,62 @@ public class Installer extends ModuleInstall {
                     projectDir = getProjectDirectory(primaryFile);
                     projectName = getProjectName(primaryFile);
 
-                    final File toFile = FileUtil.toFile(primaryFile);
 
-                    if (null != toFile) {
-                        fileName = toFile.getAbsolutePath();
+                    if (null != primaryFile.getPath()) {
+                        fileName = primaryFile.getPath();
                     }
-                }
-                if (null == projectName) {
-                    projectName = getProjectName(project);
-                }
-                if (null == projectDir && null != project) {
-                    projectDir = getProjectDirectory(project);
-                }
 
-                // create title
-                Set<String> list = new LinkedHashSet<String>();
-                if (options.showProjectName) {
-                    list.add(projectName);
-                }
-
-                if (options.showFileName) {
-                    //show relative path, when project dir is in selected path
-                    //show no relative path, when project dir equals selected path
-                    boolean isRelativePath = null != fileName && null != projectDir && fileName.startsWith(projectDir) && !fileName.equals(projectDir);
-                    if (options.showRelativeFilename && isRelativePath) {
-                        //create and use relative file name
-                        String reducedFileName = fileName.substring(projectDir.length());
-                        fileName = reducedFileName;
-                    } else {
-                        if (null == fileName && null != projectDir) {
-                            //show projectDir as fallback
-                            fileName = projectDir;
+                    //support selected items in jars
+                    if (null != FileUtil.getArchiveFile(primaryFile)) {
+                        String fullJARPath = FileUtil.getArchiveFile(primaryFile).getPath();
+                        String archiveFileName = primaryFile.getPath();
+                        boolean hasFileName = null != archiveFileName && !"".equals(archiveFileName);
+                        if (hasFileName) {
+                            fileName = fullJARPath + "/" + archiveFileName;
+                        } else {
+                            fileName = fullJARPath;
                         }
                     }
-                    list.add(fileName);
+                    if (null == projectName) {
+                        projectName = getProjectName(project);
+                    }
+                    if (null == projectDir && null != project) {
+                        projectDir = getProjectDirectory(project);
+                    }
+
+                    // create title
+                    Set<String> list = new LinkedHashSet<String>();
+                    if (options.showProjectName) {
+                        list.add(projectName);
+                    }
+
+                    if (options.showFileName) {
+                        //show relative path, when project dir is in selected path
+                        //show no relative path, when project dir equals selected path
+                        boolean isRelativePath = null != fileName && null != projectDir && fileName.startsWith(projectDir) && !fileName.equals(projectDir);
+                        if (options.showRelativeFilename && isRelativePath) {
+                            //create and use relative file name
+                            String reducedFileName = fileName.substring(projectDir.length());
+                            fileName = reducedFileName;
+                        } else {
+                            if (null == fileName && null != projectDir) {
+                                //show projectDir as fallback
+                                fileName = projectDir;
+                            }
+                        }
+                        list.add(fileName);
+                    }
+
+                    if (options.showIDEVersion) {
+                        // version only available for netbeans >=7.1
+                        list.add(System.getProperty("netbeans.productversion"));
+                    }
+
+                    // set title
+                    String title = StringUtils_join_nullignore(list, " - ");
+                    WindowManager.getDefault().getMainWindow().setTitle(defaultIfEmpty(title, "NetBeans"));
+
                 }
-
-                if (options.showIDEVersion) {
-                    // version only available for netbeans >=7.1
-                    list.add(System.getProperty("netbeans.productversion"));
-                }
-
-                // set title
-                String title = StringUtils_join_nullignore(list, " - ");
-                WindowManager.getDefault().getMainWindow().setTitle(defaultIfEmpty(title, "NetBeans"));
-
             }
 
             /**
@@ -147,7 +158,7 @@ public class Installer extends ModuleInstall {
             private String getProjectDirectory(final Project project) {
                 try {
                     FileObject projectDirectory = project.getProjectDirectory();
-                    return FileUtil.toFile(projectDirectory).getAbsolutePath();
+                    return projectDirectory.getPath();
                 } catch (Exception e) {
                     //ignore the exception
                     return null;
