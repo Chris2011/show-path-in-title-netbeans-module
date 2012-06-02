@@ -28,6 +28,7 @@ import org.openide.filesystems.FileUtil;
 import org.openide.loaders.DataObject;
 import org.openide.loaders.DataShadow;
 import org.openide.modules.ModuleInstall;
+import org.openide.nodes.Node;
 import org.openide.windows.Mode;
 import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
@@ -67,8 +68,8 @@ public class Installer extends ModuleInstall {
 
                 DataObject dataObject = activeTC.getLookup().lookup(DataObject.class);
                 Project project = activeTC.getLookup().lookup(Project.class);
-//                showInStatusBar(activeTC.getLookup().lookup(DataObject.class));
-//                showInStatusBar(activeTC.getLookup().lookup(Project.class));
+                Node node = activeTC.getLookup().lookup(Node.class);
+//                showInStatusBar(project);
 
                 String projectName = null;
                 String projectDir = null;
@@ -115,12 +116,16 @@ public class Installer extends ModuleInstall {
                         //create and use relative file name
                         String reducedFileName = fileName.substring(projectDir.length());
                         fileName = reducedFileName;
-                    } else {
-                        if (null == fileName && null != projectDir) {
-                            //show projectDir as fallback
-                            fileName = projectDir;
-                        }
+                    } 
+                    if (null == fileName && null != projectDir) {
+                        //show projectDir as fallback
+                        fileName = projectDir;
                     }
+                    if (null == fileName && null != node) {
+                        //show node label as further fallback
+                        fileName = (node.getDisplayName());
+                    }
+                    
                     list.add(fileName);
                 }
 
@@ -139,7 +144,7 @@ public class Installer extends ModuleInstall {
              * the given default.
              */
             private String defaultIfEmpty(String string, String defaultStr) {
-                if (null == string || "".equals(string)) {
+                if (isEmpty(string)) {
                     return defaultStr;
                 }
                 return string;
@@ -236,6 +241,10 @@ public class Installer extends ModuleInstall {
                     StatusDisplayer.getDefault().setStatusText("");
 
                 }
+            }
+
+            private boolean isEmpty(String string) {
+                return null == string || "".equals(string);
             }
         };
     }
