@@ -21,6 +21,7 @@ import java.io.File;
 import java.util.*;
 import org.netbeans.api.project.FileOwnerQuery;
 import org.netbeans.api.project.Project;
+import org.netbeans.api.project.ProjectManager;
 import org.netbeans.api.project.ProjectUtils;
 import org.openide.awt.StatusDisplayer;
 import org.openide.filesystems.FileObject;
@@ -53,185 +54,8 @@ public class Installer extends ModuleInstall {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
                 ShowPathInTitleOptions options = ShowPathInTitleOptions.load();
-
-                TopComponent activeTC = null;
-                if (options.useNodeAsReference) {
-                    activeTC = TopComponent.getRegistry().getActivated();
-                }
-                if (options.useEditorAsReference) {
-                    activeTC = getCurrentEditor();
-                }
-
-                if (null == activeTC) {
-                    return;
-                }
-
-                DataObject dataObject = activeTC.getLookup().lookup(DataObject.class);
-                Project project = activeTC.getLookup().lookup(Project.class);
-                Node node = activeTC.getLookup().lookup(Node.class);
-//                showInStatusBar(project);
-
-                String projectName = null;
-                String projectDir = null;
-                String fileName = null;
-                if (null != project) {
-                    projectName = getProjectName(project);
-                    projectDir = getProjectDirectory(project);
-                }
-
-                if (null != dataObject) {
-                    final FileObject primaryFile = getFileObjectWithShadowSupport(dataObject);
-                    projectDir = getProjectDirectory(primaryFile);
-                    projectName = getProjectName(primaryFile);
-
-
-                    if (null != primaryFile.getPath()) {
-                        fileName = primaryFile.getPath();
-                    }
-
-                    //support selected items in jars
-                    if (null != FileUtil.getArchiveFile(primaryFile)) {
-                        String fullJARPath = FileUtil.getArchiveFile(primaryFile).getPath();
-                        String archiveFileName = primaryFile.getPath();
-                        boolean hasFileName = null != archiveFileName && !"".equals(archiveFileName);
-                        if (hasFileName) {
-                            fileName = fullJARPath + "/" + archiveFileName;
-                        } else {
-                            fileName = fullJARPath;
-                        }
-                    }
-
-                }
-                // create title
-                Set<String> list = new LinkedHashSet<String>();
-                if (options.showProjectName) {
-                    list.add(projectName);
-                }
-
-                if (options.showFileName) {
-                    //show relative path, when project dir is in selected path
-                    //show no relative path, when project dir equals selected path
-                    boolean isRelativePath = null != fileName && null != projectDir && fileName.startsWith(projectDir) && !fileName.equals(projectDir);
-                    if (options.showRelativeFilename && isRelativePath) {
-                        //create and use relative file name
-                        String reducedFileName = fileName.substring(projectDir.length());
-                        fileName = reducedFileName;
-                    } 
-                    if (null == fileName && null != projectDir) {
-                        //show projectDir as fallback
-                        fileName = projectDir;
-                    }
-                    if (null == fileName && null != node) {
-                        //show node label as further fallback
-                        fileName = (node.getDisplayName());
-                    }
-                    
-                    list.add(fileName);
-                }
-
-                if (options.showIDEVersion) {
-                    // version only available for netbeans >=7.1
-                    list.add(System.getProperty("netbeans.productversion"));
-                }
-
-                // set title
-                String title = StringUtils_join_nullignore(list, " - ");
-                WindowManager.getDefault().getMainWindow().setTitle(defaultIfEmpty(title, "NetBeans"));
-            }
-
-            /**
-             * Returns the original string if not empty or not null. Else return
-             * the given default.
-             */
-            private String defaultIfEmpty(String string, String defaultStr) {
-                if (isEmpty(string)) {
-                    return defaultStr;
-                }
-                return string;
-            }
-
-            private String getProjectDirectory(final FileObject primaryFile) {
-                try {
-                    Project project = ProjectUtils.getInformation(FileOwnerQuery.getOwner(primaryFile)).getProject();
-                    return getProjectDirectory(project);
-                } catch (Exception e) {
-                    //ignore the exception
-                    return null;
-                }
-            }
-
-            private String getProjectDirectory(final Project project) {
-                try {
-                    FileObject projectDirectory = project.getProjectDirectory();
-                    return projectDirectory.getPath();
-                } catch (Exception e) {
-                    //ignore the exception
-                    return null;
-                }
-            }
-
-            private void showSystemProperties() {
-                Iterable<String> keys = new TreeSet<String>(System.getProperties().stringPropertyNames());
-                for (String key : keys) {
-                    System.out.println(key + "=" + System.getProperty(key));
-                }
-            }
-
-            private String getProjectName(final Project project) {
-                try {
-
-                    return ProjectUtils.getInformation(project).getDisplayName();
-                } catch (Exception e) {
-                    //ignore the exception
-                    return null;
-                }
-            }
-
-            private String getProjectName(final FileObject primaryFile) {
-                try {
-                    return ProjectUtils.getInformation(FileOwnerQuery.getOwner(primaryFile)).getDisplayName();
-                } catch (Exception e) {
-                    //ignore the exception
-                    return null;
-                }
-            }
-
-            private String StringUtils_join_nullignore(Iterable<String> list, String separator) {
-                boolean first = true;
-                String a = "";
-                for (String string : list) {
-                    if (null == string || "".equals(string)) {
-                        continue;
-                    }
-                    if (!first) {
-                        a += separator;
-                    }
-
-                    a += string;
-                    first = false;
-                }
-                return a;
-            }
-
-            private FileObject getFileObjectWithShadowSupport(DataObject dataObject) {
-                if (dataObject instanceof DataShadow) {
-                    DataShadow dataShadow = (DataShadow) dataObject;
-                    return dataShadow.getOriginal().getPrimaryFile();
-                }
-                return dataObject.getPrimaryFile();
-            }
-
-            /**
-             * Gets the currently opened editor.
-             */
-            private TopComponent getCurrentEditor() {
-                Set<? extends Mode> modes = WindowManager.getDefault().getModes();
-                for (Mode mode : modes) {
-                    if ("editor".equals(mode.getName())) {
-                        return mode.getSelectedTopComponent();
-                    }
-                }
-                return null;
+                String title = new Generator().doit(options);
+                WindowManager.getDefault().getMainWindow().setTitle(title);
             }
 
             private void showInStatusBar(Object data) {
@@ -243,8 +67,11 @@ public class Installer extends ModuleInstall {
                 }
             }
 
-            private boolean isEmpty(String string) {
-                return null == string || "".equals(string);
+            private void showSystemProperties() {
+                Iterable<String> keys = new TreeSet<String>(System.getProperties().stringPropertyNames());
+                for (String key : keys) {
+                    System.out.println(key + "=" + System.getProperty(key));
+                }
             }
         };
     }

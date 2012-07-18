@@ -15,6 +15,10 @@
  */
 package de.markiewb.netbeans.plugin.showpathintitle;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.prefs.Preferences;
 import org.openide.util.NbPreferences;
 
@@ -32,16 +36,21 @@ public class ShowPathInTitleOptions {
     public static final String SHOWRELATIVEFILENAME = "showRelativeFilename";
     public static final String USENODEASREFERENCE = "useNodeAsReference";
     public static final String USEEDITORASREFERENCE = "useEditorAsReference";
+    public static final String SIMPLE_MODE = "simpleMode";
+    public static final String PROP_ADVANCEDMODE = "advancedMode";
+    public static final String CUSTOMFORMAT = "format";
+    public static final String CUSTOMFORMAT_DEFAULT = "${project} ${filename_rel} ${version}";
+    public static final String PROP_SIMPLEMODE = "simpleMode";
 
-    private ShowPathInTitleOptions() {
-        //NOP
-    }
     public boolean showProjectName;
     public boolean showFileName;
     public boolean showIDEVersion;
     public boolean showRelativeFilename;
     public boolean useNodeAsReference;
     public boolean useEditorAsReference;
+    public boolean simpleMode;
+
+    public String format;
 
     public static ShowPathInTitleOptions load() {
         Preferences pref = NbPreferences.forModule(ShowPathInTitleOptions.class);
@@ -53,25 +62,32 @@ public class ShowPathInTitleOptions {
         options.showRelativeFilename = pref.getBoolean(SHOWRELATIVEFILENAME, true);
         options.useNodeAsReference = pref.getBoolean(USENODEASREFERENCE, true);
         options.useEditorAsReference = pref.getBoolean(USEEDITORASREFERENCE, false);
+        options.format = pref.get(CUSTOMFORMAT, CUSTOMFORMAT_DEFAULT);
+        options.simpleMode = pref.getBoolean(SIMPLE_MODE, true);
+
         return options;
     }
 
     public void save() {
         Preferences pref = NbPreferences.forModule(ShowPathInTitleOptions.class);
+        pref.putBoolean(SIMPLE_MODE, simpleMode);
         pref.putBoolean(SHOWPROJECTNAME, showProjectName);
         pref.putBoolean(SHOWFILENAME, showFileName);
         pref.putBoolean(SHOWIDEVERSION, showIDEVersion);
         pref.putBoolean(SHOWRELATIVEFILENAME, showRelativeFilename);
         pref.putBoolean(USENODEASREFERENCE, useNodeAsReference);
         pref.putBoolean(USEEDITORASREFERENCE, useEditorAsReference);
+        pref.put(CUSTOMFORMAT, format);
     }
 
     public void reset() {
+        simpleMode = true;
         showProjectName = true;
         showFileName = true;
         showIDEVersion = true;
         showRelativeFilename = true;
         useNodeAsReference = true;
         useEditorAsReference = false;
+        format = CUSTOMFORMAT_DEFAULT;
     }
 }
