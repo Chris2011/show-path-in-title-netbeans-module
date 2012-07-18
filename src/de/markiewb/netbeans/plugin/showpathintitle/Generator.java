@@ -231,7 +231,8 @@ public class Generator {
         Node node = activeTC.getLookup().lookup(Node.class);
         ContextObject c = new ContextObject(project, dataObject, node);
 
-        String[] split = options.format.split(" ");
+        
+        String[] split = options.getDefinedFormat().split(" ");
 
         Map<String, String> map = new HashMap<String, String>();
         map.put("${project}", StringUtils.defaultIfEmpty(createProjectName(c)));

@@ -41,7 +41,6 @@ public class ShowPathInTitleOptions {
     public static final String CUSTOMFORMAT = "format";
     public static final String CUSTOMFORMAT_DEFAULT = "${project} ${filename_rel} ${version}";
     public static final String PROP_SIMPLEMODE = "simpleMode";
-
     public boolean showProjectName;
     public boolean showFileName;
     public boolean showIDEVersion;
@@ -49,8 +48,32 @@ public class ShowPathInTitleOptions {
     public boolean useNodeAsReference;
     public boolean useEditorAsReference;
     public boolean simpleMode;
-
     public String format;
+
+    public String getDefinedFormat() {
+        if (simpleMode) {
+            StringBuilder sb = new StringBuilder();
+            if (showProjectName) {
+                sb.append("${project}");
+                sb.append(" ");
+            }
+            if (showFileName) {
+                if (showRelativeFilename) {
+                    sb.append("${filename_rel}");
+                } else {
+                    sb.append("${filename_abs}");
+                }
+                sb.append(" ");
+            }
+            if (showIDEVersion) {
+                sb.append("${version}");
+                sb.append(" ");
+            }
+            return sb.toString();
+        } else {
+            return format;
+        }
+    }
 
     public static ShowPathInTitleOptions load() {
         Preferences pref = NbPreferences.forModule(ShowPathInTitleOptions.class);
