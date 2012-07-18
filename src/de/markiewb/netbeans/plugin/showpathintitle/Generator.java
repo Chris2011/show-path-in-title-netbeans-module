@@ -106,15 +106,12 @@ public class Generator {
         }
         
         //try to lookup the project by traversal of the parents 
-        Node currentNode = c.getNode();
-        while (null!=currentNode) {            
-            Project project = currentNode.getLookup().lookup(Project.class);
+        for (Node node = c.getNode(); null!=node; node=node.getParentNode()) {
+            Project project = node.getLookup().lookup(Project.class);
             if (null!=project){
                 return getProjectName(project);
             }
-            currentNode=currentNode.getParentNode();
         }
-        
         return result;
     }
 
