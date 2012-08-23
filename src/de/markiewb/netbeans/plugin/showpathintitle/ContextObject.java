@@ -12,7 +12,7 @@ import org.openide.nodes.Node;
  *
  * @author Bender
  */
-class ContextObject {
+public class ContextObject {
 
     private final Project project;
     private final DataObject dataObject;

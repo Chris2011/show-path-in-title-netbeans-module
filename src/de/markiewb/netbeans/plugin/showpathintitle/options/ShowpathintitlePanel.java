@@ -15,9 +15,12 @@
  */
 package de.markiewb.netbeans.plugin.showpathintitle.options;
 
-import de.markiewb.netbeans.plugin.showpathintitle.ShowPathInTitleOptions;
+import de.markiewb.netbeans.plugin.showpathintitle.Options;
+import de.markiewb.netbeans.plugin.showpathintitle.TitleGenerator;
+import de.markiewb.netbeans.plugin.showpathintitle.strategies.Strategy;
 import java.awt.Color;
 import java.awt.Component;
+import java.util.List;
 import javax.swing.BorderFactory;
 
 final class ShowpathintitlePanel extends javax.swing.JPanel {
@@ -28,6 +31,7 @@ final class ShowpathintitlePanel extends javax.swing.JPanel {
         this.controller = controller;
         initComponents();
         // TODO listen to changes in form fields and call controller.changed()
+        this.txtCustomFormat.setToolTipText(this.getSupportedPatterns());
     }
 
     /**
@@ -41,7 +45,7 @@ final class ShowpathintitlePanel extends javax.swing.JPanel {
 
         buttonGroup1 = new javax.swing.ButtonGroup();
         buttonGroup2 = new javax.swing.ButtonGroup();
-        options = new de.markiewb.netbeans.plugin.showpathintitle.ShowPathInTitleOptions();
+        options = new de.markiewb.netbeans.plugin.showpathintitle.Options();
         jPanel4 = new javax.swing.JPanel();
         txtCustomFormat = new javax.swing.JTextField();
         cbModeAdvanced = new javax.swing.JRadioButton();
@@ -130,38 +134,6 @@ final class ShowpathintitlePanel extends javax.swing.JPanel {
 
         org.openide.awt.Mnemonics.setLocalizedText(txtIntroduction, org.openide.util.NbBundle.getMessage(ShowpathintitlePanel.class, "ShowpathintitlePanel.txtIntroduction.text")); // NOI18N
 
-        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
-        jPanel4.setLayout(jPanel4Layout);
-        jPanel4Layout.setHorizontalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(cbModeSimple)
-                    .addComponent(cbModeAdvanced)
-                    .addComponent(txtIntroduction)
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addGap(21, 21, 21)
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtCustomFormat, javax.swing.GroupLayout.PREFERRED_SIZE, 337, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap())
-        );
-        jPanel4Layout.setVerticalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
-                .addComponent(txtIntroduction)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(cbModeSimple)
-                .addGap(1, 1, 1)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(cbModeAdvanced)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(txtCustomFormat, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-        );
-
         jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder(org.openide.util.NbBundle.getMessage(ShowpathintitlePanel.class, "ShowpathintitlePanel.jPanel5.border.title"))); // NOI18N
 
         buttonGroup1.add(rbUseEditorAsReference);
@@ -200,53 +172,86 @@ final class ShowpathintitlePanel extends javax.swing.JPanel {
             }
         });
 
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(cbModeSimple)
+                            .addComponent(cbModeAdvanced)
+                            .addComponent(txtIntroduction)
+                            .addGroup(jPanel4Layout.createSequentialGroup()
+                                .addGap(21, 21, 21)
+                                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(jPanel5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(btnReset))
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addGap(21, 21, 21)
+                        .addComponent(txtCustomFormat)))
+                .addContainerGap())
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addComponent(txtIntroduction)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(cbModeSimple)
+                .addGap(1, 1, 1)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(cbModeAdvanced)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(txtCustomFormat, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnReset)
+                .addContainerGap())
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnReset)
-                .addContainerGap())
+                .addContainerGap()
+                .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 36, Short.MAX_VALUE)
-                .addComponent(btnReset)
-                .addContainerGap())
+                .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         bindingGroup.bind();
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResetActionPerformed
-        ShowPathInTitleOptions options = ShowPathInTitleOptions.load();
+        Options options = Options.load();
         options.reset();
         options.save();
 
         load();
     }//GEN-LAST:event_btnResetActionPerformed
 
-    private void cbModeAdvancedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbModeAdvancedActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_cbModeAdvancedActionPerformed
-
     private void cbVersionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbVersionActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_cbVersionActionPerformed
 
+    private void cbModeAdvancedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbModeAdvancedActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cbModeAdvancedActionPerformed
+
     void load() {
-        ShowPathInTitleOptions options = ShowPathInTitleOptions.load();
+        Options options = Options.load();
         cbVersion.setSelected(options.showIDEVersion);
         cbProjectName.setSelected(options.showProjectName);
         cbPath.setSelected(options.showFileName);
@@ -259,7 +264,7 @@ final class ShowpathintitlePanel extends javax.swing.JPanel {
     }
 
     void store() {
-        ShowPathInTitleOptions options = ShowPathInTitleOptions.load();
+        Options options = Options.load();
         options.showProjectName = cbProjectName.isSelected();
         options.showFileName = cbPath.isSelected();
         options.showIDEVersion = cbVersion.isSelected();
@@ -270,6 +275,18 @@ final class ShowpathintitlePanel extends javax.swing.JPanel {
         options.simpleMode=cbModeSimple.isSelected();
         options.save();
     }
+    String getSupportedPatterns() {
+        StringBuilder sb = new StringBuilder(); 
+        
+        List<Strategy> strategys = TitleGenerator.createStrategies();
+        for (Strategy strategy : strategys) {
+            String pattern = String.format("<tr><td><pre>%s</pre></td><td>%s</td></tr>", strategy.getSupportedKey(), strategy.getClass());
+            sb.append(pattern);
+            sb.append("<br>");
+        }
+        return String.format("<html>Supported patterns are:<br><table>%s</table></html>", sb.toString());
+    }
+    
 
     boolean valid() {
         // TODO check whether form is consistent and complete
@@ -288,7 +305,7 @@ final class ShowpathintitlePanel extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
-    private de.markiewb.netbeans.plugin.showpathintitle.ShowPathInTitleOptions options;
+    private de.markiewb.netbeans.plugin.showpathintitle.Options options;
     private javax.swing.JRadioButton rbUseEditorAsReference;
     private javax.swing.JRadioButton rbUseNodeAsReference;
     private javax.swing.JTextField txtCustomFormat;

@@ -28,7 +28,7 @@ import org.openide.util.NbPreferences;
  *
  * @author markiewb
  */
-public class ShowPathInTitleOptions {
+public class Options {
 
     public static final String SHOWFILENAME = "showFileName";
     public static final String SHOWIDEVERSION = "showIDEVersion";
@@ -75,10 +75,10 @@ public class ShowPathInTitleOptions {
         }
     }
 
-    public static ShowPathInTitleOptions load() {
-        Preferences pref = NbPreferences.forModule(ShowPathInTitleOptions.class);
+    public static Options load() {
+        Preferences pref = NbPreferences.forModule(Options.class);
 
-        ShowPathInTitleOptions options = new ShowPathInTitleOptions();
+        Options options = new Options();
         options.showProjectName = pref.getBoolean(SHOWPROJECTNAME, true);
         options.showFileName = pref.getBoolean(SHOWFILENAME, true);
         options.showIDEVersion = pref.getBoolean(SHOWIDEVERSION, true);
@@ -92,7 +92,7 @@ public class ShowPathInTitleOptions {
     }
 
     public void save() {
-        Preferences pref = NbPreferences.forModule(ShowPathInTitleOptions.class);
+        Preferences pref = NbPreferences.forModule(Options.class);
         pref.putBoolean(SIMPLE_MODE, simpleMode);
         pref.putBoolean(SHOWPROJECTNAME, showProjectName);
         pref.putBoolean(SHOWFILENAME, showFileName);

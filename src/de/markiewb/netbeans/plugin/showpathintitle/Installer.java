@@ -17,20 +17,9 @@ package de.markiewb.netbeans.plugin.showpathintitle;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.File;
 import java.util.*;
-import org.netbeans.api.project.FileOwnerQuery;
-import org.netbeans.api.project.Project;
-import org.netbeans.api.project.ProjectManager;
-import org.netbeans.api.project.ProjectUtils;
 import org.openide.awt.StatusDisplayer;
-import org.openide.filesystems.FileObject;
-import org.openide.filesystems.FileUtil;
-import org.openide.loaders.DataObject;
-import org.openide.loaders.DataShadow;
 import org.openide.modules.ModuleInstall;
-import org.openide.nodes.Node;
-import org.openide.windows.Mode;
 import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
 
@@ -53,25 +42,9 @@ public class Installer extends ModuleInstall {
         propertyChangeListener = new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
-                ShowPathInTitleOptions options = ShowPathInTitleOptions.load();
-                String title = new Generator().doit(options);
+                Options options = Options.load();
+                String title = new TitleGenerator().createTitle(options);
                 WindowManager.getDefault().getMainWindow().setTitle(title);
-            }
-
-            private void showInStatusBar(Object data) {
-                if (null != data) {
-                    StatusDisplayer.getDefault().setStatusText(data.toString());
-                } else {
-                    StatusDisplayer.getDefault().setStatusText("");
-
-                }
-            }
-
-            private void showSystemProperties() {
-                Iterable<String> keys = new TreeSet<String>(System.getProperties().stringPropertyNames());
-                for (String key : keys) {
-                    System.out.println(key + "=" + System.getProperty(key));
-                }
             }
         };
     }
@@ -85,4 +58,7 @@ public class Installer extends ModuleInstall {
     public void restored() {
         TopComponent.getRegistry().addPropertyChangeListener(propertyChangeListener);
     }
+    
+
+    
 }
