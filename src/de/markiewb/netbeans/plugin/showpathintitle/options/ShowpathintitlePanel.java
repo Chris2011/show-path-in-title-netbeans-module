@@ -16,10 +16,14 @@
 package de.markiewb.netbeans.plugin.showpathintitle.options;
 
 import de.markiewb.netbeans.plugin.showpathintitle.ShowPathInTitleOptions;
+import java.util.prefs.Preferences;
+import org.openide.util.NbPreferences;
 
 final class ShowpathintitlePanel extends javax.swing.JPanel {
 
     private final ShowpathintitleOptionsPanelController controller;
+    private Preferences pref = NbPreferences.forModule(ShowPathInTitleOptions.class);
+    private ShowPathInTitleOptions options;
 
     ShowpathintitlePanel(ShowpathintitleOptionsPanelController controller) {
         this.controller = controller;
@@ -128,11 +132,8 @@ final class ShowpathintitlePanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResetActionPerformed
-        ShowPathInTitleOptions options = ShowPathInTitleOptions.load();
         options.reset();
-        options.save();
-
-        load();
+        initUIFromOptions();
     }//GEN-LAST:event_btnResetActionPerformed
 
     private void cbPathStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_cbPathStateChanged
@@ -145,24 +146,18 @@ final class ShowpathintitlePanel extends javax.swing.JPanel {
     }//GEN-LAST:event_cbPathStateChanged
 
     void load() {
-        ShowPathInTitleOptions options = ShowPathInTitleOptions.load();
-        cbVersion.setSelected(options.showIDEVersion);
-        cbProjectName.setSelected(options.showProjectName);
-        cbPath.setSelected(options.showFileName);
-        cbRelativePath.setSelected(options.showRelativeFilename);
-        rbUseNodeAsReference.setSelected(options.useNodeAsReference);
-        rbUseEditorAsReference.setSelected(options.useEditorAsReference);
+        options = ShowPathInTitleOptions.loadFrom(pref);
+        initUIFromOptions();
     }
 
     void store() {
-        ShowPathInTitleOptions options = ShowPathInTitleOptions.load();
         options.showProjectName = cbProjectName.isSelected();
         options.showFileName = cbPath.isSelected();
         options.showIDEVersion = cbVersion.isSelected();
         options.showRelativeFilename = cbRelativePath.isSelected();
         options.useNodeAsReference = rbUseNodeAsReference.isSelected();
         options.useEditorAsReference = rbUseEditorAsReference.isSelected();
-        options.save();
+        options.saveTo(pref);
     }
 
     boolean valid() {
@@ -180,4 +175,13 @@ final class ShowpathintitlePanel extends javax.swing.JPanel {
     private javax.swing.JRadioButton rbUseNodeAsReference;
     private javax.swing.JLabel txtIntroduction;
     // End of variables declaration//GEN-END:variables
+
+    private void initUIFromOptions() {
+        cbVersion.setSelected(options.showIDEVersion);
+        cbProjectName.setSelected(options.showProjectName);
+        cbPath.setSelected(options.showFileName);
+        cbRelativePath.setSelected(options.showRelativeFilename);
+        rbUseNodeAsReference.setSelected(options.useNodeAsReference);
+        rbUseEditorAsReference.setSelected(options.useEditorAsReference);
+    }
 }

@@ -15,7 +15,9 @@
  */
 package de.markiewb.netbeans.plugin.showpathintitle;
 
+import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
+import org.openide.util.Exceptions;
 import org.openide.util.NbPreferences;
 
 /**
@@ -26,6 +28,12 @@ import org.openide.util.NbPreferences;
  */
 public class ShowPathInTitleOptions {
 
+    private static boolean default_showProjectName = true;
+    private static boolean default_showFileName = true;
+    private static boolean default_showIDEVersion = true;
+    private static boolean default_showRelativeFilename = true;
+    private static boolean default_useNodeAsReference = true;
+    private static boolean default_useEditorAsReference = false;
     public static final String SHOWFILENAME = "showFileName";
     public static final String SHOWIDEVERSION = "showIDEVersion";
     public static final String SHOWPROJECTNAME = "showProjectName";
@@ -36,6 +44,7 @@ public class ShowPathInTitleOptions {
     private ShowPathInTitleOptions() {
         //NOP
     }
+    
     public boolean showProjectName;
     public boolean showFileName;
     public boolean showIDEVersion;
@@ -43,21 +52,20 @@ public class ShowPathInTitleOptions {
     public boolean useNodeAsReference;
     public boolean useEditorAsReference;
 
-    public static ShowPathInTitleOptions load() {
-        Preferences pref = NbPreferences.forModule(ShowPathInTitleOptions.class);
+    public static ShowPathInTitleOptions loadFrom(Preferences pref) {
 
         ShowPathInTitleOptions options = new ShowPathInTitleOptions();
-        options.showProjectName = pref.getBoolean(SHOWPROJECTNAME, true);
-        options.showFileName = pref.getBoolean(SHOWFILENAME, true);
-        options.showIDEVersion = pref.getBoolean(SHOWIDEVERSION, true);
-        options.showRelativeFilename = pref.getBoolean(SHOWRELATIVEFILENAME, true);
-        options.useNodeAsReference = pref.getBoolean(USENODEASREFERENCE, true);
-        options.useEditorAsReference = pref.getBoolean(USEEDITORASREFERENCE, false);
+        options.showProjectName = pref.getBoolean(SHOWPROJECTNAME, default_showProjectName);
+        options.showFileName = pref.getBoolean(SHOWFILENAME, default_showFileName);
+        options.showIDEVersion = pref.getBoolean(SHOWIDEVERSION, default_showIDEVersion);
+        options.showRelativeFilename = pref.getBoolean(SHOWRELATIVEFILENAME, default_showRelativeFilename);
+        options.useNodeAsReference = pref.getBoolean(USENODEASREFERENCE, default_useNodeAsReference);
+        options.useEditorAsReference = pref.getBoolean(USEEDITORASREFERENCE, default_useEditorAsReference);
         return options;
     }
 
-    public void save() {
-        Preferences pref = NbPreferences.forModule(ShowPathInTitleOptions.class);
+    public void saveTo(Preferences pref) {
+        pref.put("version", "1.0");
         pref.putBoolean(SHOWPROJECTNAME, showProjectName);
         pref.putBoolean(SHOWFILENAME, showFileName);
         pref.putBoolean(SHOWIDEVERSION, showIDEVersion);
@@ -67,11 +75,11 @@ public class ShowPathInTitleOptions {
     }
 
     public void reset() {
-        showProjectName = true;
-        showFileName = true;
-        showIDEVersion = true;
-        showRelativeFilename = true;
-        useNodeAsReference = true;
-        useEditorAsReference = false;
+        showProjectName = default_showProjectName;
+        showFileName = default_showFileName;
+        showIDEVersion = default_showIDEVersion;
+        showRelativeFilename = default_showRelativeFilename;
+        useNodeAsReference = default_useNodeAsReference;
+        useEditorAsReference = default_useEditorAsReference;
     }
 }
