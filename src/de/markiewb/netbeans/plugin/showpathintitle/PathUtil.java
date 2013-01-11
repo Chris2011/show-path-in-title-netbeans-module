@@ -10,6 +10,8 @@ import java.util.TreeSet;
 import org.netbeans.api.project.FileOwnerQuery;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectUtils;
+import org.netbeans.api.project.ui.OpenProjects;
+import org.netbeans.api.project.ui.ProjectGroup;
 import org.openide.awt.StatusDisplayer;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
@@ -42,6 +44,7 @@ class PathUtil {
         DataObject dataObject = activeTC.getLookup().lookup(DataObject.class);
         Project project = activeTC.getLookup().lookup(Project.class);
         Node node = activeTC.getLookup().lookup(Node.class);
+        FileObject fileObject = activeTC.getLookup().lookup(FileObject.class);
         //                showInStatusBar(project);
 
         String projectName = null;
@@ -52,10 +55,16 @@ class PathUtil {
             projectDir = getProjectDirectory(project);
         }
 
-        if (null != dataObject) {
-            final FileObject primaryFile = getFileObjectWithShadowSupport(dataObject);
+        if (null != dataObject || null!=fileObject) {
+            
+            final FileObject primaryFile;
+            if (null != dataObject) {
+                primaryFile = getFileObjectWithShadowSupport(dataObject);
+            } else {
+                primaryFile = fileObject;
+            }
             projectDir = getProjectDirectory(primaryFile);
-                    projectName = getProjectName(primaryFile);
+            projectName = getProjectName(primaryFile);
 
 
             if (null != primaryFile.getPath()) {
@@ -77,7 +86,13 @@ class PathUtil {
         }
         // create title
         Set<String> list = new LinkedHashSet<String>();
-                if (options.showProjectName) {
+	if (options.showProjectGroup) {
+	    ProjectGroup activeProjectGroup = OpenProjects.getDefault().getActiveProjectGroup();
+	    if (null != activeProjectGroup) {
+		list.add(activeProjectGroup.getName());
+	    }
+	}
+	if (options.showProjectName) {
                     list.add(projectName);
                 }
 

@@ -28,6 +28,7 @@ import org.openide.util.NbPreferences;
  */
 public class ShowPathInTitleOptions {
 
+    private static boolean default_showProjectGroup = true;
     private static boolean default_showProjectName = true;
     private static boolean default_showFileName = true;
     private static boolean default_showIDEVersion = true;
@@ -36,6 +37,7 @@ public class ShowPathInTitleOptions {
     private static boolean default_useEditorAsReference = false;
     public static final String SHOWFILENAME = "showFileName";
     public static final String SHOWIDEVERSION = "showIDEVersion";
+    public static final String SHOWPROJECTGROUP = "showProjectGroup";
     public static final String SHOWPROJECTNAME = "showProjectName";
     public static final String SHOWRELATIVEFILENAME = "showRelativeFilename";
     public static final String USENODEASREFERENCE = "useNodeAsReference";
@@ -45,6 +47,7 @@ public class ShowPathInTitleOptions {
         //NOP
     }
     
+    public boolean showProjectGroup;
     public boolean showProjectName;
     public boolean showFileName;
     public boolean showIDEVersion;
@@ -55,6 +58,7 @@ public class ShowPathInTitleOptions {
     public static ShowPathInTitleOptions loadFrom(Preferences pref) {
 
         ShowPathInTitleOptions options = new ShowPathInTitleOptions();
+        options.showProjectGroup = pref.getBoolean(SHOWPROJECTGROUP, default_showProjectGroup);
         options.showProjectName = pref.getBoolean(SHOWPROJECTNAME, default_showProjectName);
         options.showFileName = pref.getBoolean(SHOWFILENAME, default_showFileName);
         options.showIDEVersion = pref.getBoolean(SHOWIDEVERSION, default_showIDEVersion);
@@ -65,7 +69,8 @@ public class ShowPathInTitleOptions {
     }
 
     public void saveTo(Preferences pref) {
-        pref.put("version", "1.0");
+        pref.put("version", "2.0.0");
+        pref.putBoolean(SHOWPROJECTGROUP, showProjectGroup);
         pref.putBoolean(SHOWPROJECTNAME, showProjectName);
         pref.putBoolean(SHOWFILENAME, showFileName);
         pref.putBoolean(SHOWIDEVERSION, showIDEVersion);
@@ -75,6 +80,7 @@ public class ShowPathInTitleOptions {
     }
 
     public void reset() {
+        showProjectGroup = default_showProjectGroup;
         showProjectName = default_showProjectName;
         showFileName = default_showFileName;
         showIDEVersion = default_showIDEVersion;

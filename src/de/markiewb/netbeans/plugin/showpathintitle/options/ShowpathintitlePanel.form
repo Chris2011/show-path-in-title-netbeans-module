@@ -29,8 +29,8 @@
                   </Group>
                   <Group type="102" attributes="0">
                       <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="cbProjectGroup" min="-2" max="-2" attributes="0"/>
                           <Component id="cbProjectName" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="txtIntroduction" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="cbPath" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="cbVersion" min="-2" max="-2" attributes="0"/>
                           <Group type="102" alignment="0" attributes="0">
@@ -41,8 +41,9 @@
                                   <Component id="rbUseEditorAsReference" alignment="0" min="-2" max="-2" attributes="0"/>
                               </Group>
                           </Group>
+                          <Component id="txtIntroduction" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace min="0" pref="13" max="32767" attributes="0"/>
+                      <EmptySpace min="0" pref="31" max="32767" attributes="0"/>
                   </Group>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
@@ -56,7 +57,9 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="txtIntroduction" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="8" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="11" max="-2" attributes="0"/>
+                      <Component id="cbProjectGroup" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Component id="cbProjectName" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="cbPath" min="-2" max="-2" attributes="0"/>
@@ -68,7 +71,7 @@
                       <Component id="rbUseEditorAsReference" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="cbVersion" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="0" pref="25" max="32767" attributes="0"/>
+                      <EmptySpace min="0" pref="54" max="32767" attributes="0"/>
                   </Group>
                   <Group type="102" alignment="1" attributes="0">
                       <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
@@ -152,6 +155,13 @@
         </Property>
         <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
           <ResourceString bundle="de/markiewb/netbeans/plugin/showpathintitle/options/Bundle.properties" key="ShowpathintitlePanel.rbUseNodeAsReference.toolTipText" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+        </Property>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JCheckBox" name="cbProjectGroup">
+      <Properties>
+        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+          <ResourceString bundle="de/markiewb/netbeans/plugin/showpathintitle/options/Bundle.properties" key="ShowpathintitlePanel.cbProjectGroup.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
         </Property>
       </Properties>
     </Component>
