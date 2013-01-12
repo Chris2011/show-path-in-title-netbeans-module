@@ -25,6 +25,14 @@ import org.openide.util.NbPreferences;
  * @author markiewb
  */
 public class ProjectGroupUtil {
+    /**
+     * Preferences key for the active group ID.
+     */
+    private static final String KEY_ACTIVE = "active"; // NOI18N
+    /**
+     * Preferences key for display name of group.
+     */
+    protected static final String KEY_NAME = "name"; // NOI18N
 
     /**
      * Get the preference for the given node path.
@@ -50,11 +58,11 @@ public class ProjectGroupUtil {
     public String getActiveProjectGroup() {
 	Preferences groupNode = getPreferences("org/netbeans/modules/projectui/groups");
 	if (null != groupNode) {
-	    final String groupId = groupNode.get("active", null);
+	    final String groupId = groupNode.get(KEY_ACTIVE, null);
 	    if (null != groupId) {
 		final Preferences groupPref = getPreferences("org/netbeans/modules/projectui/groups" + "/" + groupId);
 		if (null != groupPref) {
-		    final String activeProjectGroup = groupPref.get(PathUtil.KEY_NAME, null);
+		    final String activeProjectGroup = groupPref.get(KEY_NAME, null);
 		    return activeProjectGroup;
 		}
 	    }

@@ -37,15 +37,6 @@ import org.openide.windows.WindowManager;
  */
 class PathUtil {
 
-    /**
-     * Preferences key for the active group ID.
-     */
-    private static final String KEY_ACTIVE = "active"; // NOI18N
-    /**
-     * Preferences key for display name of group.
-     */
-    protected static final String KEY_NAME = "name"; // NOI18N
-
     public String getPath(ShowPathInTitleOptions options) {
 	TopComponent activeTC = null;
 	if (options.useNodeAsReference) {
