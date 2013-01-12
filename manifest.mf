@@ -2,5 +2,5 @@ Manifest-Version: 1.0
 OpenIDE-Module: de.markiewb.netbeans.plugin.showpathintitle
 OpenIDE-Module-Install: de/markiewb/netbeans/plugin/showpathintitle/Installer.class
 OpenIDE-Module-Localizing-Bundle: de/markiewb/netbeans/plugin/showpathintitle/Bundle.properties
-OpenIDE-Module-Specification-Version: 2.0.0
+OpenIDE-Module-Specification-Version: 2.0.1
 
