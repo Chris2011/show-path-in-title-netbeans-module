@@ -219,13 +219,9 @@ class PathUtil {
      * Gets the currently opened editor.
      */
     private TopComponent getCurrentEditor() {
-	Set<? extends Mode> modes = WindowManager.getDefault().getModes();
-	for (Mode mode : modes) {
-	    if ("editor".equals(mode.getName())) {
-		return mode.getSelectedTopComponent();
-	    }
-	}
-	return null;
+        WindowManager wm = WindowManager.getDefault();
+        Mode editor = wm.findMode("editor");
+        return editor.getSelectedTopComponent();
     }
 
     private void showInStatusBar(Object data) {
