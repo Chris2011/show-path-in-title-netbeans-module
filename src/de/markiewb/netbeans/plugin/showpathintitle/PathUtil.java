@@ -18,8 +18,10 @@ package de.markiewb.netbeans.plugin.showpathintitle;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.TreeSet;
+
 import org.netbeans.api.project.FileOwnerQuery;
 import org.netbeans.api.project.Project;
+import org.netbeans.api.project.ProjectInformation;
 import org.netbeans.api.project.ProjectUtils;
 import org.openide.awt.StatusDisplayer;
 import org.openide.filesystems.FileObject;
@@ -72,8 +74,12 @@ class PathUtil {
 	    } else {
 		primaryFile = fileObject;
 	    }
-	    projectDir = getProjectDirectory(primaryFile);
-	    projectName = getProjectName(primaryFile);
+		Project owner = FileOwnerQuery.getOwner(primaryFile);
+		if (owner != null) {
+			ProjectInformation information = ProjectUtils.getInformation(owner);
+			projectDir = getProjectDirectory(information);
+			projectName = getProjectName(information);
+		}
 
 
 	    if (null != primaryFile.getPath()) {
@@ -84,7 +90,7 @@ class PathUtil {
 	    if (null != FileUtil.getArchiveFile(primaryFile)) {
 		String fullJARPath = FileUtil.getArchiveFile(primaryFile).getPath();
 		String archiveFileName = primaryFile.getPath();
-		boolean hasFileName = null != archiveFileName && !"".equals(archiveFileName);
+		boolean hasFileName = !isEmpty(archiveFileName);
 		if (hasFileName) {
 		    fileName = fullJARPath + "/" + archiveFileName;
 		} else {
@@ -146,25 +152,14 @@ class PathUtil {
 	return string;
     }
 
-    private String getProjectDirectory(final FileObject primaryFile) {
-	try {
-	    Project project = ProjectUtils.getInformation(FileOwnerQuery.getOwner(primaryFile)).getProject();
-	    return getProjectDirectory(project);
-	} catch (Exception e) {
-	    //ignore the exception
-	    return null;
+	private String getProjectDirectory(final ProjectInformation projectInformation) {
+		return getProjectDirectory(projectInformation.getProject());
 	}
-    }
 
-    private String getProjectDirectory(final Project project) {
-	try {
-	    FileObject projectDirectory = project.getProjectDirectory();
-	    return projectDirectory.getPath();
-	} catch (Exception e) {
-	    //ignore the exception
-	    return null;
+	private String getProjectDirectory(final Project project) {
+		FileObject projectDirectory = project.getProjectDirectory();
+		return projectDirectory.getPath();
 	}
-    }
 
     private void showSystemProperties() {
 	Iterable<String> keys = new TreeSet<String>(System.getProperties().stringPropertyNames());
@@ -173,38 +168,28 @@ class PathUtil {
 	}
     }
 
-    private String getProjectName(final Project project) {
-	try {
-	    return ProjectUtils.getInformation(project).getDisplayName();
-	} catch (Exception e) {
-	    //ignore the exception
-	    return null;
+	private String getProjectName(final Project project) {
+		return getProjectName(ProjectUtils.getInformation(project));
 	}
-    }
 
-    private String getProjectName(final FileObject primaryFile) {
-	try {
-	    return ProjectUtils.getInformation(FileOwnerQuery.getOwner(primaryFile)).getDisplayName();
-	} catch (Exception e) {
-	    //ignore the exception
-	    return null;
+	private String getProjectName(final ProjectInformation projectInformation) {
+		return projectInformation.getDisplayName();
 	}
-    }
 
     private String StringUtils_join_nullignore(Iterable<String> list, String separator) {
 	boolean first = true;
-	String a = "";
+	StringBuilder a = new StringBuilder();
 	for (String string : list) {
-	    if (null == string || "".equals(string)) {
+	    if (isEmpty(string)) {
 		continue;
 	    }
 	    if (!first) {
-		a += separator;
+		a.append(separator);
 	    }
-	    a += string;
+	    a .append(string);
 	    first = false;
 	}
-	return a;
+	return a.toString();
     }
 
     private FileObject getFileObjectWithShadowSupport(DataObject dataObject) {
