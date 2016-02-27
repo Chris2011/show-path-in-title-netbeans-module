@@ -40,105 +40,104 @@ import org.openide.windows.WindowManager;
 class PathUtil {
 
     public String getPath(ShowPathInTitleOptions options) {
-	TopComponent activeTC = null;
-	if (options.useNodeAsReference) {
-	    activeTC = TopComponent.getRegistry().getActivated();
-	}
-	if (options.useEditorAsReference) {
-	    activeTC = getCurrentEditor();
-	}
+        TopComponent activeTC = null;
+        if (options.useNodeAsReference) {
+            activeTC = TopComponent.getRegistry().getActivated();
+        }
+        if (options.useEditorAsReference) {
+            activeTC = getCurrentEditor();
+        }
 
-	if (null == activeTC) {
-	    return null;
-	}
+        if (null == activeTC) {
+            return null;
+        }
 
-	DataObject dataObject = activeTC.getLookup().lookup(DataObject.class);
-	Project project = activeTC.getLookup().lookup(Project.class);
-	Node node = activeTC.getLookup().lookup(Node.class);
-	FileObject fileObject = activeTC.getLookup().lookup(FileObject.class);
-	//                showInStatusBar(project);
+        DataObject dataObject = activeTC.getLookup().lookup(DataObject.class);
+        Project project = activeTC.getLookup().lookup(Project.class);
+        Node node = activeTC.getLookup().lookup(Node.class);
+        FileObject fileObject = activeTC.getLookup().lookup(FileObject.class);
+        //                showInStatusBar(project);
 
-	String projectName = null;
-	String projectDir = null;
-	String fileName = null;
-	if (null != project) {
-	    projectName = getProjectName(project);
-	    projectDir = getProjectDirectory(project);
-	}
+        String projectName = null;
+        String projectDir = null;
+        String fileName = null;
+        if (null != project) {
+            projectName = getProjectName(project);
+            projectDir = getProjectDirectory(project);
+        }
 
-	if (null != dataObject || null != fileObject) {
+        if (null != dataObject || null != fileObject) {
 
-	    final FileObject primaryFile;
-	    if (null != dataObject) {
-		primaryFile = getFileObjectWithShadowSupport(dataObject);
-	    } else {
-		primaryFile = fileObject;
-	    }
-		Project owner = FileOwnerQuery.getOwner(primaryFile);
-		if (owner != null) {
-			ProjectInformation information = ProjectUtils.getInformation(owner);
-			projectDir = getProjectDirectory(information);
-			projectName = getProjectName(information);
-		}
+            final FileObject primaryFile;
+            if (null != dataObject) {
+                primaryFile = getFileObjectWithShadowSupport(dataObject);
+            } else {
+                primaryFile = fileObject;
+            }
+            Project owner = FileOwnerQuery.getOwner(primaryFile);
+            if (owner != null) {
+                ProjectInformation information = ProjectUtils.getInformation(owner);
+                projectDir = getProjectDirectory(information);
+                projectName = getProjectName(information);
+            }
 
+            if (null != primaryFile.getPath()) {
+                fileName = primaryFile.getPath();
+            }
 
-	    if (null != primaryFile.getPath()) {
-		fileName = primaryFile.getPath();
-	    }
+            //support selected items in jars
+            if (null != FileUtil.getArchiveFile(primaryFile)) {
+                String fullJARPath = FileUtil.getArchiveFile(primaryFile).getPath();
+                String archiveFileName = primaryFile.getPath();
+                boolean hasFileName = !isEmpty(archiveFileName);
+                if (hasFileName) {
+                    fileName = fullJARPath + "/" + archiveFileName;
+                } else {
+                    fileName = fullJARPath;
+                }
+            }
 
-	    //support selected items in jars
-	    if (null != FileUtil.getArchiveFile(primaryFile)) {
-		String fullJARPath = FileUtil.getArchiveFile(primaryFile).getPath();
-		String archiveFileName = primaryFile.getPath();
-		boolean hasFileName = !isEmpty(archiveFileName);
-		if (hasFileName) {
-		    fileName = fullJARPath + "/" + archiveFileName;
-		} else {
-		    fileName = fullJARPath;
-		}
-	    }
+        }
+        // create title
+        Set<String> list = new LinkedHashSet<String>();
 
-	}
-	// create title
-	Set<String> list = new LinkedHashSet<String>();
+        if (options.showProjectGroup) {
+            String activeProjectGroup = new ProjectGroupUtil().getActiveProjectGroup();
+            list.add(activeProjectGroup);
+        }
+        if (options.showProjectName) {
+            list.add(projectName);
+        }
 
-	if (options.showProjectGroup) {
-	    String activeProjectGroup = new ProjectGroupUtil().getActiveProjectGroup();
-	    list.add(activeProjectGroup);
-	}
-	if (options.showProjectName) {
-	    list.add(projectName);
-	}
+        if (options.showFileName) {
+            //show relative path, when project dir is in selected path
+            //show no relative path, when project dir equals selected path
+            boolean isRelativePath = null != fileName && null != projectDir && fileName.startsWith(projectDir) && !fileName.equals(projectDir);
+            if (options.showRelativeFilename && isRelativePath) {
+                //create and use relative file name
+                String reducedFileName = fileName.substring(projectDir.length());
+                fileName = reducedFileName;
+            }
+            if (null == fileName && null != projectDir) {
+                //show projectDir as fallback
+                fileName = projectDir;
+            }
+            if (null == fileName && null != node) {
+                //show node label as further fallback
+                fileName = (node.getDisplayName());
+            }
 
-	if (options.showFileName) {
-	    //show relative path, when project dir is in selected path
-	    //show no relative path, when project dir equals selected path
-	    boolean isRelativePath = null != fileName && null != projectDir && fileName.startsWith(projectDir) && !fileName.equals(projectDir);
-	    if (options.showRelativeFilename && isRelativePath) {
-		//create and use relative file name
-		String reducedFileName = fileName.substring(projectDir.length());
-		fileName = reducedFileName;
-	    }
-	    if (null == fileName && null != projectDir) {
-		//show projectDir as fallback
-		fileName = projectDir;
-	    }
-	    if (null == fileName && null != node) {
-		//show node label as further fallback
-		fileName = (node.getDisplayName());
-	    }
+            list.add(fileName);
+        }
 
-	    list.add(fileName);
-	}
-
-	if (options.showIDEVersion) {
-	    // version only available for netbeans >=7.1
-	    list.add(System.getProperty("netbeans.productversion"));
-	}
-	// set title
-	String title = StringUtils_join_nullignore(list, " - ");
+        if (options.showIDEVersion) {
+            // version only available for netbeans >=7.1
+            list.add(System.getProperty("netbeans.productversion"));
+        }
+        // set title
+        String title = StringUtils_join_nullignore(list, " - ");
 //        showInStatusBar(title);
-	return title;
+        return title;
     }
 
     /**
@@ -146,58 +145,58 @@ class PathUtil {
      * given default.
      */
     private String defaultIfEmpty(String string, String defaultStr) {
-	if (isEmpty(string)) {
-	    return defaultStr;
-	}
-	return string;
+        if (isEmpty(string)) {
+            return defaultStr;
+        }
+        return string;
     }
 
-	private String getProjectDirectory(final ProjectInformation projectInformation) {
-		return getProjectDirectory(projectInformation.getProject());
-	}
+    private String getProjectDirectory(final ProjectInformation projectInformation) {
+        return getProjectDirectory(projectInformation.getProject());
+    }
 
-	private String getProjectDirectory(final Project project) {
-		FileObject projectDirectory = project.getProjectDirectory();
-		return projectDirectory.getPath();
-	}
+    private String getProjectDirectory(final Project project) {
+        FileObject projectDirectory = project.getProjectDirectory();
+        return projectDirectory.getPath();
+    }
 
     private void showSystemProperties() {
-	Iterable<String> keys = new TreeSet<String>(System.getProperties().stringPropertyNames());
-	for (String key : keys) {
-	    System.out.println(key + "=" + System.getProperty(key));
-	}
+        Iterable<String> keys = new TreeSet<String>(System.getProperties().stringPropertyNames());
+        for (String key : keys) {
+            System.out.println(key + "=" + System.getProperty(key));
+        }
     }
 
-	private String getProjectName(final Project project) {
-		return getProjectName(ProjectUtils.getInformation(project));
-	}
+    private String getProjectName(final Project project) {
+        return getProjectName(ProjectUtils.getInformation(project));
+    }
 
-	private String getProjectName(final ProjectInformation projectInformation) {
-		return projectInformation.getDisplayName();
-	}
+    private String getProjectName(final ProjectInformation projectInformation) {
+        return projectInformation.getDisplayName();
+    }
 
     private String StringUtils_join_nullignore(Iterable<String> list, String separator) {
-	boolean first = true;
-	StringBuilder a = new StringBuilder();
-	for (String string : list) {
-	    if (isEmpty(string)) {
-		continue;
-	    }
-	    if (!first) {
-		a.append(separator);
-	    }
-	    a .append(string);
-	    first = false;
-	}
-	return a.toString();
+        boolean first = true;
+        StringBuilder a = new StringBuilder();
+        for (String string : list) {
+            if (isEmpty(string)) {
+                continue;
+            }
+            if (!first) {
+                a.append(separator);
+            }
+            a.append(string);
+            first = false;
+        }
+        return a.toString();
     }
 
     private FileObject getFileObjectWithShadowSupport(DataObject dataObject) {
-	if (dataObject instanceof DataShadow) {
-	    DataShadow dataShadow = (DataShadow) dataObject;
-	    return dataShadow.getOriginal().getPrimaryFile();
-	}
-	return dataObject.getPrimaryFile();
+        if (dataObject instanceof DataShadow) {
+            DataShadow dataShadow = (DataShadow) dataObject;
+            return dataShadow.getOriginal().getPrimaryFile();
+        }
+        return dataObject.getPrimaryFile();
     }
 
     /**
@@ -210,14 +209,14 @@ class PathUtil {
     }
 
     private void showInStatusBar(Object data) {
-	if (null != data) {
-	    StatusDisplayer.getDefault().setStatusText(data.toString());
-	} else {
-	    StatusDisplayer.getDefault().setStatusText("");
-	}
+        if (null != data) {
+            StatusDisplayer.getDefault().setStatusText(data.toString());
+        } else {
+            StatusDisplayer.getDefault().setStatusText("");
+        }
     }
 
     private boolean isEmpty(String string) {
-	return null == string || "".equals(string);
+        return null == string || "".equals(string);
     }
 }

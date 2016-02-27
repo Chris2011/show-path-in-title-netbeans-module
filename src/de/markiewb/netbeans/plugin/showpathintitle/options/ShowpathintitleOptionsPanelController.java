@@ -23,9 +23,9 @@ import org.openide.util.HelpCtx;
 import org.openide.util.Lookup;
 
 @OptionsPanelController.SubRegistration(location = "Editor",
-displayName = "#AdvancedOption_DisplayName_Showpathintitle",
-keywords = "#AdvancedOption_Keywords_Showpathintitle",
-keywordsCategory = "Editor/Showpathintitlebar")
+        displayName = "#AdvancedOption_DisplayName_Showpathintitle",
+        keywords = "#AdvancedOption_Keywords_Showpathintitle",
+        keywordsCategory = "Editor/Showpathintitlebar")
 public final class ShowpathintitleOptionsPanelController extends OptionsPanelController {
 
     private ShowpathintitlePanel panel;

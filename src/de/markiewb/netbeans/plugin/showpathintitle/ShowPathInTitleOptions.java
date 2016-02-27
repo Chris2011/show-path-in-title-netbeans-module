@@ -46,7 +46,7 @@ public class ShowPathInTitleOptions {
     private ShowPathInTitleOptions() {
         //NOP
     }
-    
+
     public boolean showProjectGroup;
     public boolean showProjectName;
     public boolean showFileName;

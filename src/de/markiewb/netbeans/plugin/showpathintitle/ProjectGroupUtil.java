@@ -25,6 +25,7 @@ import org.openide.util.NbPreferences;
  * @author markiewb
  */
 public class ProjectGroupUtil {
+
     /**
      * Preferences key for the active group ID.
      */
@@ -41,14 +42,14 @@ public class ProjectGroupUtil {
      * @return {@link Preferences} or null
      */
     private Preferences getPreferences(String path) {
-	try {
-	    if (NbPreferences.root().nodeExists(path)) {
-		return NbPreferences.root().node(path);
-	    }
-	} catch (BackingStoreException ex) {
-	    Exceptions.printStackTrace(ex);
-	}
-	return null;
+        try {
+            if (NbPreferences.root().nodeExists(path)) {
+                return NbPreferences.root().node(path);
+            }
+        } catch (BackingStoreException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+        return null;
     }
 
     /**
@@ -56,17 +57,17 @@ public class ProjectGroupUtil {
      * @return name of the current project group or null
      */
     public String getActiveProjectGroup() {
-	Preferences groupNode = getPreferences("org/netbeans/modules/projectui/groups");
-	if (null != groupNode) {
-	    final String groupId = groupNode.get(KEY_ACTIVE, null);
-	    if (null != groupId) {
-		final Preferences groupPref = getPreferences("org/netbeans/modules/projectui/groups" + "/" + groupId);
-		if (null != groupPref) {
-		    final String activeProjectGroup = groupPref.get(KEY_NAME, null);
-		    return activeProjectGroup;
-		}
-	    }
-	}
-	return null;
+        Preferences groupNode = getPreferences("org/netbeans/modules/projectui/groups");
+        if (null != groupNode) {
+            final String groupId = groupNode.get(KEY_ACTIVE, null);
+            if (null != groupId) {
+                final Preferences groupPref = getPreferences("org/netbeans/modules/projectui/groups" + "/" + groupId);
+                if (null != groupPref) {
+                    final String activeProjectGroup = groupPref.get(KEY_NAME, null);
+                    return activeProjectGroup;
+                }
+            }
+        }
+        return null;
     }
 }

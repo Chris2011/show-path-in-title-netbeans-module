@@ -157,7 +157,7 @@ final class ShowpathintitlePanel extends javax.swing.JPanel {
     }
 
     void store() {
-        options.showProjectGroup= cbProjectGroup.isSelected();
+        options.showProjectGroup = cbProjectGroup.isSelected();
         options.showProjectName = cbProjectName.isSelected();
         options.showFileName = cbPath.isSelected();
         options.showIDEVersion = cbVersion.isSelected();
