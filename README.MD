@@ -12,6 +12,8 @@ Updates in 2.1.0
 <ul>
 <li>[<a href="https://github.com/markiewb/show-path-in-title-netbeans-module/pull/21">Issue  21</a>]: Speed up the query for the current project (PR by Shredder121)</li>
 <li>[<a href="https://github.com/markiewb/show-path-in-title-netbeans-module/issues/22">Issue  22</a>]: Update to 8.0.2 platform</li>
+<li>[<a href="https://github.com/markiewb/show-path-in-title-netbeans-module/issues/17">Issue  17</a>]: Move options to Options|Appearance</li>
+
 </ul>
 
 Updates in 2.0.1
