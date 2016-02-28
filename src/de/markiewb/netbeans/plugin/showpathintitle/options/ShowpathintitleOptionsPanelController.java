@@ -22,10 +22,12 @@ import org.netbeans.spi.options.OptionsPanelController;
 import org.openide.util.HelpCtx;
 import org.openide.util.Lookup;
 
-@OptionsPanelController.SubRegistration(location = "Editor",
+@OptionsPanelController.SubRegistration(location = "Appearance",
         displayName = "#AdvancedOption_DisplayName_Showpathintitle",
         keywords = "#AdvancedOption_Keywords_Showpathintitle",
-        keywordsCategory = "Editor/Showpathintitlebar")
+        keywordsCategory = "Appearance/Showpathintitlebar",
+        position = 50000
+)
 public final class ShowpathintitleOptionsPanelController extends OptionsPanelController {
 
     private ShowpathintitlePanel panel;
