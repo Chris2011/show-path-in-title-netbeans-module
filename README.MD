@@ -5,7 +5,9 @@ It shows the current project group, project name, path of the current file/node/
 It can be configured using an option panel.
 
 See <a href="http://plugins.netbeans.org/plugin/42000/show-path-in-title">http://plugins.netbeans.org/plugin/42000/show-path-in-title</a>
+This implements the feature request from <a href="http://netbeans.org/bugzilla/show_bug.cgi?id=159722">http://netbeans.org/bugzilla/show_bug.cgi?id=159722</a>
 
+<img src="https://raw.githubusercontent.com/markiewb/show-path-in-title-netbeans-module/master/src/test/resources/example.png">
 
 <p>
 Updates in 2.1.0
