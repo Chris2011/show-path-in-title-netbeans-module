@@ -10,6 +10,12 @@ This implements the feature request from <a href="http://netbeans.org/bugzilla/s
 <img src="https://raw.githubusercontent.com/markiewb/show-path-in-title-netbeans-module/master/src/test/resources/example.png">
 
 <p>
+Updates in 2.2.0
+<ul>
+<li>[<a href="https://github.com/markiewb/show-path-in-title-netbeans-module/issues/25">Issue 25</a>]: Fixed: Wrong file displayed if using docked windows (initial code by Shredder121)</li>
+<li>[<a href="https://github.com/markiewb/show-path-in-title-netbeans-module/issues/3">Issue 3</a>]: Fixed: When multiple files are selected only the last one is shown</li>
+</ul>
+
 Updates in 2.1.0
 <ul>
 <li>[<a href="https://github.com/markiewb/show-path-in-title-netbeans-module/pull/21">Issue  21</a>]: Speed up the query for the current project (PR by Shredder121)</li>
