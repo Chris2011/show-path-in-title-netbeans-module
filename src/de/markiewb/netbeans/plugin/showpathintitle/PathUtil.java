@@ -1,5 +1,5 @@
 /**
- * Copyright 2013 markiewb
+ * Copyright 2013-2016 markiewb
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -15,20 +15,16 @@
  */
 package de.markiewb.netbeans.plugin.showpathintitle;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
-import java.util.TreeSet;
-
 import org.netbeans.api.project.FileOwnerQuery;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectInformation;
 import org.netbeans.api.project.ProjectUtils;
-import org.openide.awt.StatusDisplayer;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.loaders.DataObject;
 import org.openide.loaders.DataShadow;
 import org.openide.nodes.Node;
+import org.openide.util.Lookup;
 import org.openide.windows.Mode;
 import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
@@ -39,24 +35,35 @@ import org.openide.windows.WindowManager;
  */
 class PathUtil {
 
-    public String getPath(ShowPathInTitleOptions options) {
-        TopComponent activeTC = null;
+    public TitleBuilder getPath(ShowPathInTitleOptions options, TopComponent editor, Node[] selectedNodes) {
+        Node node = null;
+        Lookup.Provider provider = null;
         if (options.useNodeAsReference) {
-            activeTC = TopComponent.getRegistry().getActivated();
-        }
-        if (options.useEditorAsReference) {
-            activeTC = getCurrentEditor();
+            if (null != selectedNodes && selectedNodes.length >= 2) {
+                // cannot decide which node is more important, so leave it
+                TitleBuilder b = new TitleBuilder();
+                b.setFileName("Multiple files selected");
+                return b;
+            }
+            provider = firstOrNull(selectedNodes);
+            node = firstOrNull(selectedNodes);
+            if (provider != null && null != provider.getLookup().lookup(DataObject.class)) {
+                // pick a better lookup target, since Node doesn't necessarily
+                // have a Project etc., at least we hope so
+                provider = provider.getLookup().lookup(DataObject.class);
+            }
+        } else if (options.useEditorAsReference) {
+            provider = getEditor(editor);
+            node = provider.getLookup().lookup(Node.class);
         }
 
-        if (null == activeTC) {
-            return null;
+        if (null == provider) {
+            return new TitleBuilder();
         }
 
-        DataObject dataObject = activeTC.getLookup().lookup(DataObject.class);
-        Project project = activeTC.getLookup().lookup(Project.class);
-        Node node = activeTC.getLookup().lookup(Node.class);
-        FileObject fileObject = activeTC.getLookup().lookup(FileObject.class);
-        //                showInStatusBar(project);
+        DataObject dataObject = provider.getLookup().lookup(DataObject.class);
+        Project project = provider.getLookup().lookup(Project.class);
+        FileObject fileObject = provider.getLookup().lookup(FileObject.class);
 
         String projectName = null;
         String projectDir = null;
@@ -85,70 +92,35 @@ class PathUtil {
                 fileName = primaryFile.getPath();
             }
 
-            //support selected items in jars
+            // support selected items in jars
             if (null != FileUtil.getArchiveFile(primaryFile)) {
                 String fullJARPath = FileUtil.getArchiveFile(primaryFile).getPath();
                 String archiveFileName = primaryFile.getPath();
-                boolean hasFileName = !isEmpty(archiveFileName);
+                boolean hasFileName = !StringUtils.isEmpty(archiveFileName);
                 if (hasFileName) {
                     fileName = fullJARPath + "/" + archiveFileName;
                 } else {
                     fileName = fullJARPath;
                 }
             }
-
-        }
-        // create title
-        Set<String> list = new LinkedHashSet<String>();
-
-        if (options.showProjectGroup) {
-            String activeProjectGroup = new ProjectGroupUtil().getActiveProjectGroup();
-            list.add(activeProjectGroup);
-        }
-        if (options.showProjectName) {
-            list.add(projectName);
         }
 
-        if (options.showFileName) {
-            //show relative path, when project dir is in selected path
-            //show no relative path, when project dir equals selected path
-            boolean isRelativePath = null != fileName && null != projectDir && fileName.startsWith(projectDir) && !fileName.equals(projectDir);
-            if (options.showRelativeFilename && isRelativePath) {
-                //create and use relative file name
-                String reducedFileName = fileName.substring(projectDir.length());
-                fileName = reducedFileName;
-            }
-            if (null == fileName && null != projectDir) {
-                //show projectDir as fallback
-                fileName = projectDir;
-            }
-            if (null == fileName && null != node) {
-                //show node label as further fallback
-                fileName = (node.getDisplayName());
-            }
+        TitleBuilder builder = new TitleBuilder();
+        builder.setActiveProjectGroup(new ProjectGroupUtil().getActiveProjectGroup());
+        builder.setProjectName(projectName);
+        builder.setProjectDir(projectDir);
+        builder.setFileName(fileName);
+        builder.setNodeDisplayName(null != node ? node.getDisplayName() : null);
 
-            list.add(fileName);
-        }
-
-        if (options.showIDEVersion) {
-            // version only available for netbeans >=7.1
-            list.add(System.getProperty("netbeans.productversion"));
-        }
-        // set title
-        String title = StringUtils_join_nullignore(list, " - ");
-//        showInStatusBar(title);
-        return title;
+        return builder;
     }
 
-    /**
-     * Returns the original string if not empty or not null. Else return the
-     * given default.
-     */
-    private String defaultIfEmpty(String string, String defaultStr) {
-        if (isEmpty(string)) {
-            return defaultStr;
-        }
-        return string;
+    private Lookup.Provider getEditor(TopComponent editor) {
+        Lookup.Provider activeTC;
+        WindowManager wm = WindowManager.getDefault();
+        boolean isEditor = editor != null && wm.isEditorTopComponent(editor);
+        activeTC = isEditor ? editor : getCurrentEditor();
+        return activeTC;
     }
 
     private String getProjectDirectory(final ProjectInformation projectInformation) {
@@ -160,35 +132,12 @@ class PathUtil {
         return projectDirectory.getPath();
     }
 
-    private void showSystemProperties() {
-        Iterable<String> keys = new TreeSet<String>(System.getProperties().stringPropertyNames());
-        for (String key : keys) {
-            System.out.println(key + "=" + System.getProperty(key));
-        }
-    }
-
     private String getProjectName(final Project project) {
         return getProjectName(ProjectUtils.getInformation(project));
     }
 
     private String getProjectName(final ProjectInformation projectInformation) {
         return projectInformation.getDisplayName();
-    }
-
-    private String StringUtils_join_nullignore(Iterable<String> list, String separator) {
-        boolean first = true;
-        StringBuilder a = new StringBuilder();
-        for (String string : list) {
-            if (isEmpty(string)) {
-                continue;
-            }
-            if (!first) {
-                a.append(separator);
-            }
-            a.append(string);
-            first = false;
-        }
-        return a.toString();
     }
 
     private FileObject getFileObjectWithShadowSupport(DataObject dataObject) {
@@ -208,15 +157,7 @@ class PathUtil {
         return editor.getSelectedTopComponent();
     }
 
-    private void showInStatusBar(Object data) {
-        if (null != data) {
-            StatusDisplayer.getDefault().setStatusText(data.toString());
-        } else {
-            StatusDisplayer.getDefault().setStatusText("");
-        }
-    }
-
-    private boolean isEmpty(String string) {
-        return null == string || "".equals(string);
+    private <T> T firstOrNull(T[] array) {
+        return array != null && array.length > 0 ? array[0] : null;
     }
 }

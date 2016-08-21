@@ -15,12 +15,17 @@
  */
 package de.markiewb.netbeans.plugin.showpathintitle;
 
+import static de.markiewb.netbeans.plugin.showpathintitle.StringUtils.defaultIfEmpty;
+import static org.openide.windows.TopComponent.Registry.*;
+
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
 import java.util.prefs.Preferences;
+
 import org.openide.modules.ModuleInstall;
+import org.openide.nodes.Node;
 import org.openide.util.NbPreferences;
 import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
@@ -31,7 +36,7 @@ import org.openide.windows.WindowManager;
  * version (only supported for NB &gt;=7.1)</li></ul>. It can be configured
  * using {@link ShowPathInTitleOptions).
  *
- * http://code.google.com/p/show-path-in-title-netbeans-module/
+ * https://github.com/markiewb/show-path-in-title-netbeans-module
  *
  * @author markiewb
  */
@@ -41,30 +46,16 @@ public class Installer extends ModuleInstall implements PreferenceChangeListener
     private Preferences pref = NbPreferences.forModule(ShowPathInTitleOptions.class);
     private String previousTitle;
 
-    private void updateTitle() {
+    private void updateTitle(final TopComponent editor, final Node[] selectedNodes) {
         // on change set the title
         WindowManager.getDefault().invokeWhenUIReady(new Runnable() {
             @Override
             public void run() {
-                final String title = new PathUtil().getPath(ShowPathInTitleOptions.loadFrom(pref));
-                WindowManager.getDefault().getMainWindow().setTitle(defaultIfEmpty(title, previousTitle));
+                ShowPathInTitleOptions options = ShowPathInTitleOptions.loadFrom(pref);
+                TitleBuilder path = new PathUtil().getPath(options, editor, selectedNodes);
+                WindowManager.getDefault().getMainWindow().setTitle(defaultIfEmpty(path.build(options), previousTitle));
             }
         });
-    }
-
-    /**
-     * Returns the original string if not empty or not null. Else return the
-     * given default.
-     */
-    private String defaultIfEmpty(String string, String defaultStr) {
-        if (isEmpty(string)) {
-            return defaultStr;
-        }
-        return string;
-    }
-
-    private boolean isEmpty(String string) {
-        return null == string || "".equals(string);
     }
 
     @Override
@@ -91,20 +82,31 @@ public class Installer extends ModuleInstall implements PreferenceChangeListener
                 TopComponent.getRegistry().addPropertyChangeListener(listenerA);
                 pref.addPreferenceChangeListener(listenerB);
 
-                // initial setting of title
-                updateTitle();
-
+                // initial setting of title - emulate configuration change
+                preferenceChange(null);
             }
         });
     }
 
     @Override
     public void preferenceChange(PreferenceChangeEvent evt) {
-        updateTitle();
+        TopComponent.Registry registry = TopComponent.getRegistry();
+        updateTitle(registry.getActivated(), registry.getActivatedNodes());
     }
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        updateTitle();
+        String propertyName = evt.getPropertyName();
+        Object newValue = evt.getNewValue();
+        if (evt.getSource() instanceof TopComponent.Registry) {
+            TopComponent.Registry registry = (TopComponent.Registry) evt.getSource();
+
+            ShowPathInTitleOptions options = ShowPathInTitleOptions.loadFrom(pref);
+            if (options.useEditorAsReference && PROP_ACTIVATED.equals(propertyName)) {
+                updateTitle((TopComponent) newValue, registry.getActivatedNodes());
+            } else if (options.useNodeAsReference && PROP_ACTIVATED_NODES.equals(propertyName)) {
+                updateTitle(registry.getActivated(), (org.openide.nodes.Node[]) newValue);
+            }
+        }
     }
 }
